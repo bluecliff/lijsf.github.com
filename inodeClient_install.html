@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	   	
+    <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type= "text/javascript">
+       MathJax.Hub.Config({
+           config: ["MMLorHTML.js"],
+           jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
+           TeX: { extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"], equationNumbers: { autoNumber: "AMS" } },
+           extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+           tex2jax: { 
+               inlineMath: [ ['$','$'] ],
+               displayMath: [ ['$$','$$'] ],
+               processEscapes: true },
+           "HTML-CSS": {
+               styles: { ".MathJax .mo, .MathJax .mi": {color: "black ! important"}}
+           }
+       });
+    </script>
+
+	        <title>ubuntu12.04 64位系统安装校园网客户端inodeClient</title>
+        <meta charset="utf-8" />
+        <link rel="stylesheet" href="./theme/css/main.css" type="text/css" />
+
+		<link rel="stylesheet" href="./theme/css/pygments/borland.css" type="test/css" />
+	        
+	        <link href="/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="li-blog Atom Feed" />
+                
+        <!--[if IE]>
+                <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+        <!--[if lte IE 7]>
+                <link rel="stylesheet" type="text/css" media="all" href="./css/ie.css"/>
+                <script src="./js/IE8.js" type="text/javascript"></script><![endif]-->
+
+        <!--[if lt IE 7]>
+                <link rel="stylesheet" type="text/css" media="all" href="./css/ie6.css"/><![endif]-->
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="./">li-blog </a></h1>
+                <nav><ul>
+                                                                                                    <li class="active"><a href="./category/linuxying-yong.html">linux应用</a></li>
+                                    <li ><a href="./category/ke-tang-bi-ji.html">课堂笔记</a></li>
+                                </ul></nav>
+        </header><!-- /#banner -->
+        <section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="./inodeClient_install.html" rel="bookmark"
+           title="Permalink to ubuntu12.04 64位系统安装校园网客户端inodeClient">ubuntu12.04 64位系统安装校园网客户端inodeClient</a></h1>
+          </header>
+
+    <div class="entry-content">
+      <footer class="post-info">
+        <abbr class="published" title="2013-01-12T10:20:00">
+                2013-01-12(六)
+        </abbr>
+
+                <address class="vcard author">
+                By <a class="url fn" href="./author/lijsf.html">lijsf</a>
+        </address>
+        <p>In <a href="./category/linuxying-yong.html">linux应用</a>. </p>
+<p>tags: <a href="./tag/ubuntu1204.html">ubuntu12.04</a><a href="./tag/inodeclient.html">inodeClient</a><a href="./tag/xiao-yuan-wang.html">校园网</a></p>
+</footer><!-- /.post-info -->      <h1>主要步骤</h1>
+<p>(1).  下载安装包,解压到相应目录。</p>
+<p>(2).  64位系统，需要先安装32位的运行库：apt-get install ia32-libs* getlibs
+   若源中找不到getlibs库，可去http://forum.ubuntu.org.cn/viewtopic.php?t=205525下载deb包安装。</p>
+<p>(3).  进入inodeClient目录，修改iNodeCLient根目录下的enablecards.ps。将其中第二行cd /etc/sysconfig/network-scripts
+ 修改为cd /etc/network,再运行install.sh。注意install.sh的权限。</p>
+<p>(4).  安装后可通过 ps -e|grep A 命令查看是否安装成功，结果类似于：1694 ?        00:00:00 AuthenMngServic
+ 表示安装成功。若无该服务进程，则安装不成功。</p>
+<p>(5). 安装后， 若运行不成功，多会提示缺少libtiff.so.3和libjpeg.so.62两个库文件，32位的系统可以直接通过下面的命令建立软链接：
+ ln -s /usr/lib/libtiff.so.3 /usr/lib/i386-linux-gnu/libtiff.so.4.x.x。libjpeg.so.62也可类似处理。若找不到对应的
+ 较新的库的位置，可用命令locate libtiff.so查找其位置。</p>
+<p>(6).  对64位系统，在处理litfiff或者libjpeg库时可能建立软链接后因为库inode不识别64位的libtiff和libjpeg而不能运行。可以去
+ 微盘下载这两个文件，放到/usr/lib目录下即可。</p>
+    </div><!-- /.entry-content -->
+    
+  </article>
+</section>
+<!-- UY BEGIN -->
+<div class="comments">
+<h2>Comments !</h2>
+<div id="uyan_frame"></div>
+<script type="text/javascript" id="UYScript" src="http://v1.uyan.cc/js/iframe.js?UYUserId=1736030" async=""></script>
+</div>
+<!-- UY END -->
+        <section id="extras" class="body">
+                        <div class="blogroll">
+                        <h2>blogroll</h2>
+                        <ul>
+                                                    <li><a href="http://docs.notmyidea.org/alexis/pelican/">Pelican</a></li>
+                                                    <li><a href="http://python.org">Python.org</a></li>
+                                                    <li><a href="http://jinja.pocoo.org">Jinja2</a></li>
+                                                    <li><a href="#">You can modify those links in your config file</a></li>
+                                                </ul>
+                </div><!-- /.blogroll -->
+                                <div class="social">
+                        <h2>social</h2>
+                        <ul>
+                            <li><a href="/feeds/all.atom.xml" type="application/atom+xml" rel="alternate">atom feed</a></li>
+                            
+                                                    <li><a href="#">You can add links in your config file</a></li>
+                                                    <li><a href="#">Another social link</a></li>
+                                                </ul>
+                </div><!-- /.social -->
+                </section><!-- /#extras -->
+
+
+
+
+        <footer id="contentinfo" class="body">
+                <address id="about" class="vcard body">
+                Proudly powered by <a href="http://getpelican.com/">Pelican</a>, which takes great advantage of <a href="http://python.org">Python</a>.
+                </address><!-- /#about -->
+
+                <p>The theme is by <a href="http://coding.smashingmagazine.com/2009/08/04/designing-a-html-5-layout-from-scratch/">Smashing Magazine</a>, thanks!</p>
+        </footer><!-- /#contentinfo -->
+
+</body>
+</html>
