@@ -1,5 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
+<<<<<<< HEAD
 <feed xmlns="http://www.w3.org/2005/Atom"><title>Blue Dream</title><link href="http://bluedream.me/" rel="alternate"></link><link href="http://bluedream.me/feeds/linux%E5%BA%94%E7%94%A8.atom.xml" rel="self"></link><id>http://bluedream.me/</id><updated>2013-01-12T10:20:00+08:00</updated><entry><title>ubuntu12.04 64位系统安装校园网客户端inodeClient</title><link href="http://bluedream.me/inodeClient_install.html" rel="alternate"></link><updated>2013-01-12T10:20:00+08:00</updated><author><name>lijsf</name></author><id>tag:bluedream.me,2013-01-12:inodeClient_install.html</id><summary type="html">&lt;h1&gt;主要步骤&lt;/h1&gt;
+=======
+<feed xmlns="http://www.w3.org/2005/Atom"><title>li-blog</title><link href="/" rel="alternate"></link><link href="/feeds/linux%E5%BA%94%E7%94%A8.atom.xml" rel="self"></link><id>/</id><updated>2013-01-23T10:20:00+08:00</updated><entry><title>代码高亮测试</title><link href="/sytax%20hight%20light%20test.html" rel="alternate"></link><updated>2013-01-23T10:20:00+08:00</updated><author><name>lijsf</name></author><id>tag:,2013-01-23:sytax hight light test.html</id><summary type="html">&lt;h1&gt;TEST&lt;/h1&gt;
+&lt;p&gt;dsjl&lt;/p&gt;
+&lt;div class="codehilite"&gt;&lt;pre&gt;ls -al
+sudo ifconfig eth0 hw ether MAC
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="codehilite"&gt;&lt;pre&gt;    &lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;__future__&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;division&lt;/span&gt;
+    &lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;numpy&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;</summary><category term="ubuntu12.04"></category><category term="inodeClient"></category><category term="校园网"></category></entry><entry><title>ubuntu12.04 64位系统安装校园网客户端inodeClient</title><link href="/inodeClient_install.html" rel="alternate"></link><updated>2013-01-12T10:20:00+08:00</updated><author><name>lijsf</name></author><id>tag:,2013-01-12:inodeClient_install.html</id><summary type="html">&lt;h1&gt;主要步骤&lt;/h1&gt;
+>>>>>>> bd26d316aee844cad7cfcb8ac7a3ce36d6670c21
 &lt;p&gt;(1).  下载安装包,解压到相应目录。&lt;/p&gt;
 &lt;p&gt;(2).  64位系统，需要先安装32位的运行库：apt-get install ia32-libs* getlibs
    若源中找不到getlibs库，可去http://forum.ubuntu.org.cn/viewtopic.php?t=205525下载deb包安装。&lt;/p&gt;
