@@ -64,7 +64,7 @@
 &lt;/ul&gt;
 &lt;h1&gt;结果展示&lt;/h1&gt;
 &lt;p&gt;下面是程序的运算结果：&lt;/p&gt;
-&lt;p&gt;&lt;img alt="问题1的最速下降法结果展示" src=".images/pro1_s.jpg" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="问题1的最速下降法结果展示" src="./images/pro1_s.jpg" /&gt;&lt;/p&gt;
 &lt;p&gt;&lt;img alt="问题2的最速下降法结果展示" src="./images/pro2_s.jpg" /&gt;&lt;/p&gt;
 &lt;p&gt;&lt;img alt="问题1的DFP法结果展示" src="./images/pro1_d.jpg" /&gt;&lt;/p&gt;
 &lt;p&gt;&lt;img alt="问题2的DFP法结果展示" src="./images/pro2_d.jpg" /&gt;&lt;/p&gt;
