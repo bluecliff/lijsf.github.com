@@ -28,10 +28,10 @@
 &lt;/ul&gt;
 &lt;h1&gt;结果展示&lt;/h1&gt;
 &lt;p&gt;下面是程序的运算结果：&lt;/p&gt;
-&lt;p&gt;&lt;img alt="问题1的最速下降法结果展示" src="pro1_s.jpg" /&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img alt="问题2的最速下降法结果展示" src="pro2_s.jpg" /&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img alt="问题1的DFP法结果展示" src="pro1_d.jpg" /&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img alt="问题2的DFP法结果展示" src="pro2_d.jpg" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="问题1的最速下降法结果展示" src=".images/pro1_s.jpg" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="问题2的最速下降法结果展示" src="./images/pro2_s.jpg" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="问题1的DFP法结果展示" src="./images/pro1_d.jpg" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="问题2的DFP法结果展示" src="./images/pro2_d.jpg" /&gt;&lt;/p&gt;
 &lt;h1&gt;结果分析&lt;/h1&gt;
 &lt;p&gt;(1).  从程序的运行结果来看，两种算法都基本实现了要求，都能顺利计算出函数的最小值。相对而言，最速下降法算法的迭代
   步数要少的多，很快就到达了最小值点。&lt;/p&gt;
