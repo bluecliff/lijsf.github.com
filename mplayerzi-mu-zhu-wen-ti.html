@@ -71,12 +71,10 @@
   </ul></nav>
   <div id="main">
     <div id="content">
-      <div class="blog-index">
-    	  		<article>
-    		<header>
-          <h1 class="entry-title">
-        <a href="./mplayerzi-mu-zhu-wen-ti.html">mplayer字幕诸问题</a>
-      </h1>
+      <div>
+	<article class="hentry" role="article">
+	<header>
+          <h1 class="entry-title">mplayer字幕诸问题</h1>
           <p class="meta"><time datetime="2013-03-02T22:23:00" pubdate>2013 三月 02 六</time></p>
 </header>
 
@@ -95,64 +93,117 @@
 并不做批量下载，所以避开射手的防机器人手段还是可以做到的。有了想法自然时
 动手实现。上github搜了一下是否已经有高手实现过了。果然，已经有人实现了这么
 一个脚本。这就是mplayer-wraper。作者的github id是sunbing81，这是其项目主页
-http ...</p></div>
-  <footer>
-    <a rel="full-article" href="./mplayerzi-mu-zhu-wen-ti.html">Read On &crarr;</a>
-  </footer>
-  		</article>
-  	  		<article>
-    		<header>
-          <h1 class="entry-title">
-        <a href="./you-dao-yun-bi-ji-gong-xiang-de-chromecha-jian-kai-fa.html">有道云笔记共享的chrome插件开发</a>
-      </h1>
-          <p class="meta"><time datetime="2013-01-18T00:00:00" pubdate>2013 一月 18 五</time></p>
-</header>
+http://gosubi.me/adow/mplayerwrapper，有很详细的介绍，照做不难。该项目有
+bash和python两个版本，python实现了影片hash和字幕的hash匹配，可以很精准的
+查找到字幕，基本不存在字幕时序问题。</p>
+<h2>字幕加载</h2>
+<p>通过mplayer-wraper可以下载到字幕，但mplayer加载字幕依然会出现问题。往往字幕
+好好的，加载上去却时乱码。据我的观察，主要有两种乱码，其一是完全的乱码，其
+二是字幕变成了下划线。</p>
+<p>前者完全乱码的原因是字幕编码的问题，只需在播放影片时指明字幕的编码，如下：</p>
+<div class="codehilite"><pre>mplayer -sub sub-file -subcp utf8 film-file
+</pre></div>
 
-  <div class="entry-content"><p>开发一个chrome的插件，实现把有道云笔记的内容通过邮件共享给好友。</p>
-<h1>初步想法</h1>
-<p>有道云笔记的windows桌面版，android版都时有共享功能的，但不知道为什么，web版的却没有～～而自己却大部分的工作学习
-  都是在linux下的。云笔记主要时用来构建自己的知识库，网上看到一段好的文字，图片，代码等东西，又不能只保存链接。好的
-  方法时下载下来分类保存，构建起自己的知识库。这时候云笔记的优势就很明显了，用插件可以很方便的把浏览器内的内容保存到
-  云端笔记中。还可以同步到手机上有空了再看～～这一功能很吸引人。</p>
-<p>国内现在可用的云笔记很多，较好的有有道，印象，麦库等。对比而言，印象笔记时老牌的国外产品evernote在国内的发布版本，
-  试用了一下，速度很快，功能强大，每月60Ｍ的上载流量也够用。但时，android版的居然不能离线保存，该功能时收费的，fuck
-  收费。要是每次看个东西都要下载一次的话，流量时真伤不起的。麦库没试用，网上的说法都是做的比较烂的。剩下个有道云，用了
-  一个多月，感觉还可以，功能相比印象差了点，但好歹够用，离线模式很好，很省流量～～但网易有道也太不重视web版的开发了 ...</p></div>
-  <footer>
-    <a rel="full-article" href="./you-dao-yun-bi-ji-gong-xiang-de-chromecha-jian-kai-fa.html">Read On &crarr;</a>
-  </footer>
-  		</article>
-  	  		<article>
-    		<header>
-          <h1 class="entry-title">
-        <a href="./inodeClient_install.html">ubuntu12.04 64位系统安装校园网客户端inodeClient</a>
-      </h1>
-          <p class="meta"><time datetime="2013-01-12T10:20:00" pubdate>2013 一月 12 六</time></p>
-</header>
 
-  <div class="entry-content">linux安装inode的过程记录</div>
-  <footer>
-    <a rel="full-article" href="./inodeClient_install.html">Read On &crarr;</a>
-  </footer>
-  		</article>
-  	  		<article>
-    		<header>
-          <h1 class="entry-title">
-        <a href="./engineering_optimization.html">工程优化方法</a>
-      </h1>
-          <p class="meta"><time datetime="2012-12-22T10:20:00" pubdate>2012 十二月 22 六</time></p>
-</header>
+<p>这样一般是可以解决问题了，但有时虽不再是乱码，但却成了下划线。这是字体的问
+题，mplayer需要指明字幕的字体才能正常显示。具体命令如下：</p>
+<div class="codehilite"><pre>mplayer -sub sub-file -subcp utf8 -font simhei film-file
+</pre></div>
 
-  <div class="entry-content">工程优化方法课程作业的文档</div>
-  <footer>
-    <a rel="full-article" href="./engineering_optimization.html">Read On &crarr;</a>
-  </footer>
-  		</article>
-  	  	<div class="pagination">
-  
-    <br />
-</div>  </div>
-      <aside class="sidebar">
+
+<p>simhei是一种中文linux下的字体，如果没有可以安装，或者使用现有的字体。可以在
+/usr/share/fonts目录下找到系统安装的所有字体。</p>
+<h2>简单方法</h2>
+<p>上述方法可以实现目的，但看个电影敲一堆命令的体验肯定不好，有时再折腾半个小
+时就更难受了。mplayer是一个成功的软件，自然可以写配置文件，有配置文件，所有
+的命令行参数都可以写进去做为默认参数执行。</p>
+<p>如上文所示的命令，只需要在~/.mplayer/config文件里写上两行即可:</p>
+<div class="codehilite"><pre><span class="nv">subcp</span><span class="o">=</span><span class="s1">&#39;utf8&#39;</span>
+<span class="nv">font</span><span class="o">=</span><span class="s1">&#39;simhei&#39;</span>
+</pre></div>
+
+
+<p>如此即可直接用mplayer播放影片了，不需要再加其他参数，当然若遇上其他编码格式
+的字幕文件，直接用默认参数肯定会乱码，可以在播放之前把字幕文件编码转为utf8，
+或者在命令行里加上指明字幕编码的命令参数。</p></div>
+	<footer>
+	<p class="meta">
+  <span class="byline author vcard">
+    Posted by <span class="fn">lijsf</span>
+  </span>
+  <time datetime="2013-03-02T22:23:00" pubdate>2013 三月 02 六</time>    <span class="categories">
+        <a class="category" href="./tag/linuxying-yong.html">linux应用</a>
+        <a class="category" href="./tag/mplayer.html">mplayer</a>
+      </span>
+  </p>	</footer>
+	
+	<!--这是一段注释。注释掉下一篇文章，暂时还没实现这个功能。-->
+	<!--
+	<p class="meta">
+
+		<a class="basic-alignment left" href="/2012/09/new-wacom/" title="Previous Post: 入手Wacom Bamboo CTL470">&laquo;mplayer字幕诸问题</a>
+	
+	<a class="basic-alignment right" href="/2013/01/leave-google/" title="Next Post: Richard Stallman仍然是对的">Richard Stallman仍然是对的 &raquo;</a>
+
+	</p>
+	-->
+
+	</article>
+	
+	</div>
+<aside class="sidebar">
+  <section>
+    <h1>Recent Posts</h1>
+    <ul id="recent_posts">
+            <li class="post">
+          <a href="./mplayerzi-mu-zhu-wen-ti.html">mplayer字幕诸问题</a>
+      </li>
+            <li class="post">
+          <a href="./you-dao-yun-bi-ji-gong-xiang-de-chromecha-jian-kai-fa.html">有道云笔记共享的chrome插件开发</a>
+      </li>
+            <li class="post">
+          <a href="./inodeClient_install.html">ubuntu12.04 64位系统安装校园网客户端inodeClient</a>
+      </li>
+            <li class="post">
+          <a href="./engineering_optimization.html">工程优化方法</a>
+      </li>
+          </ul>
+  </section>
+  <!--
+    <section>
+      
+    <h1>Categories</h1>
+    <ul id="recent_posts">
+              <li><a href="./category/essays.html">Essays</a></li>
+              <li><a href="./category/linux.html">Linux</a></li>
+              <li><a href="./category/notes.html">Notes</a></li>
+          </ul>
+  </section>
+   
+ -->
+  <section>
+  <h1>Tags</h1>
+      <a href="./tag/gong-cheng-you-hua-fang-fa.html">工程优化方法</a>,      <a href="./tag/python.html">python</a>,      <a href="./tag/linuxying-yong.html">linux应用</a>,      <a href="./tag/ubuntu1204.html">ubuntu12.04</a>,      <a href="./tag/mplayer.html">mplayer</a>,      <a href="./tag/xiao-yuan-wang.html">校园网</a>,      <a href="./tag/inodeclient.html">inodeClient</a>    </section>
+
+    
+    <section>
+        <h1>Social</h2>
+        <ul>
+            <li><a href="http://bluedream.me/" type="application/rss+xml" rel="alternate">RSS</a></li>
+                    <li><a href="https://plus.google.com/u/0/115690930397939734244/posts" target="_blank">Google+</a></li>
+                    <li><a href="http://weibo.com/u/1259626554" target="_blank">weibo</a></li>
+                </ul>
+    </section>
+      <section>
+        <h1>Blogroll</h2>
+        <ul>
+                    <li><a href="http://docs.notmyidea.org/alexis/pelican/" target="_blank">Pelican</a></li>
+                    <li><a href="http://python.org" target="_blank">Python.org</a></li>
+                    <li><a href="http://jinja.pocoo.org" target="_blank">Jinja2</a></li>
+                    <li><a href="http://bluedream.me" target="_blank">Bluedream</a></li>
+                </ul>
+    </section>
+</aside>      <aside class="sidebar">
   <section>
     <h1>Recent Posts</h1>
     <ul id="recent_posts">

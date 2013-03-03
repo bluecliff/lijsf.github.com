@@ -62,11 +62,12 @@
 
 <ul class="main-navigation">
   <li><a href="./">Home</a></li>
-  <li><a href="./archives.html">archives</a></li>
-            <li><a href="./category/linuxying-yong.html">linux应用</a></li>
-            <li><a href="./category/misc.html">misc</a></li>
-            <li><a href="./category/ke-tang-bi-ji.html">课堂笔记</a></li>
-              <!-- TODO: add categories here? -->
+  <li><a href="./archives.html">Archives</a></li>
+            <li><a href="./category/essays.html">Essays</a></li>
+            <li><a href="./category/linux.html">Linux</a></li>
+            <li><a href="./category/notes.html">Notes</a></li>
+    <li><a href="./about.html">About</a></li>
+            <!-- TODO: add categories here? -->
   </ul></nav>
   <div id="main">
     <div id="content">
@@ -79,15 +80,27 @@
 
   <div class="entry-content"><h1>主要步骤</h1>
 <p>(1).  下载安装包,解压到相应目录。</p>
-<p>(2).  64位系统，需要先安装32位的运行库：apt-get install ia32-libs* getlibs
-   若源中找不到getlibs库，可去http://forum.ubuntu.org.cn/viewtopic.php?t=205525下载deb包安装。</p>
+<p>(2).  64位系统，需要先安装32位的运行库：</p>
+<div class="codehilite"><pre>apt-get install ia32-libs* getlibs
+</pre></div>
+
+
+<p>若源中找不到getlibs库，可去http://forum.ubuntu.org.cn/viewtopic.php?t=205525下载deb包安装。</p>
 <p>(3).  进入inodeClient目录，修改iNodeCLient根目录下的enablecards.ps。将其中第二行cd /etc/sysconfig/network-scripts
  修改为cd /etc/network,再运行install.sh。注意install.sh的权限。</p>
-<p>(4).  安装后可通过 ps -e|grep A 命令查看是否安装成功，结果类似于：1694 ?        00:00:00 AuthenMngServic
- 表示安装成功。若无该服务进程，则安装不成功。</p>
-<p>(5). 安装后， 若运行不成功，多会提示缺少libtiff.so.3和libjpeg.so.62两个库文件，32位的系统可以直接通过下面的命令建立软链接：
- ln -s /usr/lib/libtiff.so.3 /usr/lib/i386-linux-gnu/libtiff.so.4.x.x。libjpeg.so.62也可类似处理。若找不到对应的
- 较新的库的位置，可用命令locate libtiff.so查找其位置。</p>
+<p>(4).  安装后可通过 </p>
+<div class="codehilite"><pre>ps -e|grep A
+</pre></div>
+
+
+<p>命令查看是否安装成功，结果类似于：1694 ?        00:00:00 AuthenMngServic
+表示安装成功。若无该服务进程，则安装不成功。</p>
+<p>(5). 安装后， 若运行不成功，多会提示缺少libtiff.so.3和libjpeg.so.62两个库文件，32位的系统可以直接通过下面的命令建立软链接：</p>
+<div class="codehilite"><pre>ln -s /usr/lib/libtiff.so.3 /usr/lib/i386-linux-gnu/libtiff.so.4.x. x
+</pre></div>
+
+
+<p>libjpeg.so.62也可类似处理。若找不到对应的较新的库的位置，可用命令locate libtiff.so查找其位置。</p>
 <p>(6).  对64位系统，在处理litfiff或者libjpeg库时可能建立软链接后因为库inode不识别64位的libtiff和libjpeg而不能运行。可以去
  微盘下载这两个文件，放到/usr/lib目录下即可。</p></div>
 	<footer>
@@ -98,6 +111,7 @@
   <time datetime="2013-01-12T10:20:00" pubdate>2013 一月 12 六</time>    <span class="categories">
         <a class="category" href="./tag/ubuntu1204.html">ubuntu12.04</a>
         <a class="category" href="./tag/inodeclient.html">inodeClient</a>
+        <a class="category" href="./tag/linuxying-yong.html">linux应用</a>
         <a class="category" href="./tag/xiao-yuan-wang.html">校园网</a>
       </span>
   </p>	</footer>
@@ -114,13 +128,6 @@
 	-->
 
 	</article>
-		<section>
-	<h1>Comments</h1>
-	<!-- UY BEGIN -->
-	<div id="uyan_frame"></div>
-	<script type="text/javascript" id="UYScript" src="http://v1.uyan.cc/js/iframe.js?UYUserId=1736030" async=""></script>
-	<!-- UY END -->
-	</section>
 	
 	</div>
 <aside class="sidebar">
@@ -128,10 +135,10 @@
     <h1>Recent Posts</h1>
     <ul id="recent_posts">
             <li class="post">
-          <a href="./you-dao-yun-bi-ji-gong-xiang-de-chromecha-jian-kai-fa.html">有道云笔记共享的chrome插件开发</a>
+          <a href="./mplayerzi-mu-zhu-wen-ti.html">mplayer字幕诸问题</a>
       </li>
             <li class="post">
-          <a href="./zhe-shi-ge-ce-shi-wen-dang.html">这是一个测试文档</a>
+          <a href="./you-dao-yun-bi-ji-gong-xiang-de-chromecha-jian-kai-fa.html">有道云笔记共享的chrome插件开发</a>
       </li>
             <li class="post">
           <a href="./inodeClient_install.html">ubuntu12.04 64位系统安装校园网客户端inodeClient</a>
@@ -146,23 +153,24 @@
       
     <h1>Categories</h1>
     <ul id="recent_posts">
-              <li><a href="./category/linuxying-yong.html">linux应用</a></li>
-              <li><a href="./category/misc.html">misc</a></li>
-              <li><a href="./category/ke-tang-bi-ji.html">课堂笔记</a></li>
+              <li><a href="./category/essays.html">Essays</a></li>
+              <li><a href="./category/linux.html">Linux</a></li>
+              <li><a href="./category/notes.html">Notes</a></li>
           </ul>
   </section>
    
  -->
   <section>
   <h1>Tags</h1>
-      <a href="./tag/python.html">python</a>,      <a href="./tag/xiao-yuan-wang.html">校园网</a>,      <a href="./tag/ubuntu1204.html">ubuntu12.04</a>,      <a href="./tag/gong-cheng-you-hua-fang-fa.html">工程优化方法</a>,      <a href="./tag/inodeclient.html">inodeClient</a>    </section>
+      <a href="./tag/gong-cheng-you-hua-fang-fa.html">工程优化方法</a>,      <a href="./tag/python.html">python</a>,      <a href="./tag/linuxying-yong.html">linux应用</a>,      <a href="./tag/ubuntu1204.html">ubuntu12.04</a>,      <a href="./tag/mplayer.html">mplayer</a>,      <a href="./tag/xiao-yuan-wang.html">校园网</a>,      <a href="./tag/inodeclient.html">inodeClient</a>    </section>
 
     
     <section>
         <h1>Social</h2>
         <ul>
             <li><a href="http://bluedream.me/" type="application/rss+xml" rel="alternate">RSS</a></li>
-                    <li><a href="http://googleplus.com" target="_blank">G+</a></li>
+                    <li><a href="https://plus.google.com/u/0/115690930397939734244/posts" target="_blank">Google+</a></li>
+                    <li><a href="http://weibo.com/u/1259626554" target="_blank">weibo</a></li>
                 </ul>
     </section>
       <section>
@@ -179,10 +187,10 @@
     <h1>Recent Posts</h1>
     <ul id="recent_posts">
             <li class="post">
-          <a href="./you-dao-yun-bi-ji-gong-xiang-de-chromecha-jian-kai-fa.html">有道云笔记共享的chrome插件开发</a>
+          <a href="./mplayerzi-mu-zhu-wen-ti.html">mplayer字幕诸问题</a>
       </li>
             <li class="post">
-          <a href="./zhe-shi-ge-ce-shi-wen-dang.html">这是一个测试文档</a>
+          <a href="./you-dao-yun-bi-ji-gong-xiang-de-chromecha-jian-kai-fa.html">有道云笔记共享的chrome插件开发</a>
       </li>
             <li class="post">
           <a href="./inodeClient_install.html">ubuntu12.04 64位系统安装校园网客户端inodeClient</a>
@@ -197,23 +205,24 @@
       
     <h1>Categories</h1>
     <ul id="recent_posts">
-              <li><a href="./category/linuxying-yong.html">linux应用</a></li>
-              <li><a href="./category/misc.html">misc</a></li>
-              <li><a href="./category/ke-tang-bi-ji.html">课堂笔记</a></li>
+              <li><a href="./category/essays.html">Essays</a></li>
+              <li><a href="./category/linux.html">Linux</a></li>
+              <li><a href="./category/notes.html">Notes</a></li>
           </ul>
   </section>
    
  -->
   <section>
   <h1>Tags</h1>
-      <a href="./tag/python.html">python</a>,      <a href="./tag/xiao-yuan-wang.html">校园网</a>,      <a href="./tag/ubuntu1204.html">ubuntu12.04</a>,      <a href="./tag/gong-cheng-you-hua-fang-fa.html">工程优化方法</a>,      <a href="./tag/inodeclient.html">inodeClient</a>    </section>
+      <a href="./tag/gong-cheng-you-hua-fang-fa.html">工程优化方法</a>,      <a href="./tag/python.html">python</a>,      <a href="./tag/linuxying-yong.html">linux应用</a>,      <a href="./tag/ubuntu1204.html">ubuntu12.04</a>,      <a href="./tag/mplayer.html">mplayer</a>,      <a href="./tag/xiao-yuan-wang.html">校园网</a>,      <a href="./tag/inodeclient.html">inodeClient</a>    </section>
 
     
     <section>
         <h1>Social</h2>
         <ul>
             <li><a href="http://bluedream.me/" type="application/rss+xml" rel="alternate">RSS</a></li>
-                    <li><a href="http://googleplus.com" target="_blank">G+</a></li>
+                    <li><a href="https://plus.google.com/u/0/115690930397939734244/posts" target="_blank">Google+</a></li>
+                    <li><a href="http://weibo.com/u/1259626554" target="_blank">weibo</a></li>
                 </ul>
     </section>
       <section>

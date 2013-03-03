@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Blue Dream</title><link href="http://bluedream.me/" rel="alternate"></link><link href="http://bluedream.me/feeds/Linux.atom.xml" rel="self"></link><id>http://bluedream.me/</id><updated>2013-03-02T22:23:00+08:00</updated><entry><title>mplayer字幕诸问题</title><link href="http://bluedream.me/mplayerzi-mu-zhu-wen-ti.html" rel="alternate"></link><updated>2013-03-02T22:23:00+08:00</updated><author><name>lijsf</name></author><id>tag:bluedream.me,2013-03-02:mplayerzi-mu-zhu-wen-ti.html</id><summary type="html">&lt;p&gt;mplayer功能强大，是linux下播放视频，电影的不二选择，但源于其功能太过于强大，
+使用起来还是有很大的难度的，但归结到我这样的新手，英语又差的，最棘手的无疑
+时字幕的诸多问题。本文记录我在使用mplayer时解决字幕问题的一些方法。&lt;/p&gt;
+&lt;h2&gt;字幕下载&lt;/h2&gt;
+&lt;p&gt;自己动手下载字幕是最简单的解决方法，但大多数时候由于影片的发布，压缩格式等
+的不同，字幕的时序也不一样，这造成下载下来的外挂字幕大多不能和影片同步。&lt;/p&gt;
+&lt;p&gt;win下有个splayer（射手播放器）很好用，可以自动跟据影片匹配射手网上的字幕，
+并且自动下载加载播放，很实用的功能。splayer虽然开源，但遗憾的是其调用了大
+量的windows API，换言之，即不能跨平台。所以在linux下还是得用mplayer系列播
+放器。&lt;/p&gt;
+&lt;p&gt;借助于脚本语言实现类似于splayer的功能是可行的，这方面，可以考虑的方法很多。
+射手虽然没有提供开放的API，但这难不倒程序员，况且我们只是自己下载来看的，
+并不做批量下载，所以避开射手的防机器人手段还是可以做到的。有了想法自然时
+动手实现。上github搜了一下是否已经有高手实现过了。果然，已经有人实现了这么
+一个脚本。这就是mplayer-wraper。作者的github id是sunbing81，这是其项目主页
+http://gosubi.me/adow/mplayerwrapper，有很详细的介绍，照做不难。该项目有
+bash和python两个版本，python实现了影片hash和字幕的hash匹配，可以很精准的
+查找到字幕，基本不存在字幕时序问题。&lt;/p&gt;
+&lt;h2&gt;字幕加载&lt;/h2&gt;
+&lt;p&gt;通过mplayer-wraper可以下载到字幕，但mplayer加载字幕依然会出现问题。往往字幕
+好好的，加载上去却时乱码。据我的观察，主要有两种乱码，其一是完全的乱码，其
+二是字幕变成了下划线。&lt;/p&gt;
+&lt;p&gt;前者完全乱码的原因是字幕编码的问题，只需在播放影片时指明字幕的编码，如下：&lt;/p&gt;
+&lt;div class="codehilite"&gt;&lt;pre&gt;mplayer -sub sub-file -subcp utf8 film-file
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;这样一般是可以解决问题了，但有时虽不再是乱码，但却成了下划线。这是字体的问
+题，mplayer需要指明字幕的字体才能正常显示。具体命令如下：&lt;/p&gt;
+&lt;div class="codehilite"&gt;&lt;pre&gt;mplayer -sub sub-file -subcp utf8 -font simhei film-file
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;simhei是一种中文linux下的字体，如果没有可以安装，或者使用现有的字体。可以在
+/usr/share/fonts目录下找到系统安装的所有字体。&lt;/p&gt;
+&lt;h2&gt;简单方法&lt;/h2&gt;
+&lt;p&gt;上述方法可以实现目的，但看个电影敲一堆命令的体验肯定不好，有时再折腾半个小
+时就更难受了。mplayer是一个成功的软件，自然可以写配置文件，有配置文件，所有
+的命令行参数都可以写进去做为默认参数执行。&lt;/p&gt;
+&lt;p&gt;如上文所示的命令，只需要在~/.mplayer/config文件里写上两行即可:&lt;/p&gt;
+&lt;div class="codehilite"&gt;&lt;pre&gt;&lt;span class="nv"&gt;subcp&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;utf8&amp;#39;&lt;/span&gt;
+&lt;span class="nv"&gt;font&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;simhei&amp;#39;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;如此即可直接用mplayer播放影片了，不需要再加其他参数，当然若遇上其他编码格式
+的字幕文件，直接用默认参数肯定会乱码，可以在播放之前把字幕文件编码转为utf8，
+或者在命令行里加上指明字幕编码的命令参数。&lt;/p&gt;</summary><category term="linux应用"></category><category term="mplayer"></category></entry><entry><title>ubuntu12.04 64位系统安装校园网客户端inodeClient</title><link href="http://bluedream.me/inodeClient_install.html" rel="alternate"></link><updated>2013-01-12T10:20:00+08:00</updated><author><name>lijsf</name></author><id>tag:bluedream.me,2013-01-12:inodeClient_install.html</id><summary type="html">&lt;h1&gt;主要步骤&lt;/h1&gt;
+&lt;p&gt;(1).  下载安装包,解压到相应目录。&lt;/p&gt;
+&lt;p&gt;(2).  64位系统，需要先安装32位的运行库：&lt;/p&gt;
+&lt;div class="codehilite"&gt;&lt;pre&gt;apt-get install ia32-libs* getlibs
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;若源中找不到getlibs库，可去http://forum.ubuntu.org.cn/viewtopic.php?t=205525下载deb包安装。&lt;/p&gt;
+&lt;p&gt;(3).  进入inodeClient目录，修改iNodeCLient根目录下的enablecards.ps。将其中第二行cd /etc/sysconfig/network-scripts
+ 修改为cd /etc/network,再运行install.sh。注意install.sh的权限。&lt;/p&gt;
+&lt;p&gt;(4).  安装后可通过 &lt;/p&gt;
+&lt;div class="codehilite"&gt;&lt;pre&gt;ps -e|grep A
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;命令查看是否安装成功，结果类似于：1694 ?        00:00:00 AuthenMngServic
+表示安装成功。若无该服务进程，则安装不成功。&lt;/p&gt;
+&lt;p&gt;(5). 安装后， 若运行不成功，多会提示缺少libtiff.so.3和libjpeg.so.62两个库文件，32位的系统可以直接通过下面的命令建立软链接：&lt;/p&gt;
+&lt;div class="codehilite"&gt;&lt;pre&gt;ln -s /usr/lib/libtiff.so.3 /usr/lib/i386-linux-gnu/libtiff.so.4.x. x
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;libjpeg.so.62也可类似处理。若找不到对应的较新的库的位置，可用命令locate libtiff.so查找其位置。&lt;/p&gt;
+&lt;p&gt;(6).  对64位系统，在处理litfiff或者libjpeg库时可能建立软链接后因为库inode不识别64位的libtiff和libjpeg而不能运行。可以去
+ 微盘下载这两个文件，放到/usr/lib目录下即可。&lt;/p&gt;</summary><category term="ubuntu12.04"></category><category term="inodeClient"></category><category term="linux应用"></category><category term="校园网"></category></entry></feed>

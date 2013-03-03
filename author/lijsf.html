@@ -62,11 +62,12 @@
 
 <ul class="main-navigation">
   <li><a href="../">Home</a></li>
-  <li><a href="../archives.html">archives</a></li>
-            <li><a href="../category/linuxying-yong.html">linux应用</a></li>
-            <li><a href="../category/misc.html">misc</a></li>
-            <li><a href="../category/ke-tang-bi-ji.html">课堂笔记</a></li>
-              <!-- TODO: add categories here? -->
+  <li><a href="../archives.html">Archives</a></li>
+            <li><a href="../category/essays.html">Essays</a></li>
+            <li><a href="../category/linux.html">Linux</a></li>
+            <li><a href="../category/notes.html">Notes</a></li>
+    <li><a href="../about.html">About</a></li>
+            <!-- TODO: add categories here? -->
   </ul></nav>
   <div id="main">
     <div id="content">
@@ -100,6 +101,34 @@
   	  		<article>
     		<header>
           <h1 class="entry-title">
+        <a href="../mplayerzi-mu-zhu-wen-ti.html">mplayer字幕诸问题</a>
+      </h1>
+          <p class="meta"><time datetime="2013-03-02T22:23:00" pubdate>2013 三月 02 六</time></p>
+</header>
+
+  <div class="entry-content"><p>mplayer功能强大，是linux下播放视频，电影的不二选择，但源于其功能太过于强大，
+使用起来还是有很大的难度的，但归结到我这样的新手，英语又差的，最棘手的无疑
+时字幕的诸多问题。本文记录我在使用mplayer时解决字幕问题的一些方法。</p>
+<h2>字幕下载</h2>
+<p>自己动手下载字幕是最简单的解决方法，但大多数时候由于影片的发布，压缩格式等
+的不同，字幕的时序也不一样，这造成下载下来的外挂字幕大多不能和影片同步。</p>
+<p>win下有个splayer（射手播放器）很好用，可以自动跟据影片匹配射手网上的字幕，
+并且自动下载加载播放，很实用的功能。splayer虽然开源，但遗憾的是其调用了大
+量的windows API，换言之，即不能跨平台。所以在linux下还是得用mplayer系列播
+放器。</p>
+<p>借助于脚本语言实现类似于splayer的功能是可行的，这方面，可以考虑的方法很多。
+射手虽然没有提供开放的API，但这难不倒程序员，况且我们只是自己下载来看的，
+并不做批量下载，所以避开射手的防机器人手段还是可以做到的。有了想法自然时
+动手实现。上github搜了一下是否已经有高手实现过了。果然，已经有人实现了这么
+一个脚本。这就是mplayer-wraper。作者的github id是sunbing81，这是其项目主页
+http ...</p></div>
+  <footer>
+    <a rel="full-article" href="../mplayerzi-mu-zhu-wen-ti.html">Read On &crarr;</a>
+  </footer>
+  		</article>
+  	  		<article>
+    		<header>
+          <h1 class="entry-title">
         <a href="../you-dao-yun-bi-ji-gong-xiang-de-chromecha-jian-kai-fa.html">有道云笔记共享的chrome插件开发</a>
       </h1>
           <p class="meta"><time datetime="2013-01-18T00:00:00" pubdate>2013 一月 18 五</time></p>
@@ -119,20 +148,6 @@
     <a rel="full-article" href="../you-dao-yun-bi-ji-gong-xiang-de-chromecha-jian-kai-fa.html">Read On &crarr;</a>
   </footer>
   		</article>
-  	  		<article>
-    		<header>
-          <h1 class="entry-title">
-        <a href="../zhe-shi-ge-ce-shi-wen-dang.html">这是一个测试文档</a>
-      </h1>
-          <p class="meta"><time datetime="2013-01-18T00:00:00" pubdate>2013 一月 18 五</time></p>
-</header>
-
-  <div class="entry-content"><h1>asada</h1>
-<p>dafsdagdfh</p></div>
-  <footer>
-    <a rel="full-article" href="../zhe-shi-ge-ce-shi-wen-dang.html">Read On &crarr;</a>
-  </footer>
-  		</article>
   	  	<div class="pagination">
   
     <br />
@@ -148,10 +163,10 @@
           <a href="../inodeClient_install.html">ubuntu12.04 64位系统安装校园网客户端inodeClient</a>
       </li>
             <li class="post">
-          <a href="../you-dao-yun-bi-ji-gong-xiang-de-chromecha-jian-kai-fa.html">有道云笔记共享的chrome插件开发</a>
+          <a href="../mplayerzi-mu-zhu-wen-ti.html">mplayer字幕诸问题</a>
       </li>
             <li class="post">
-          <a href="../zhe-shi-ge-ce-shi-wen-dang.html">这是一个测试文档</a>
+          <a href="../you-dao-yun-bi-ji-gong-xiang-de-chromecha-jian-kai-fa.html">有道云笔记共享的chrome插件开发</a>
       </li>
           </ul>
   </section>
@@ -160,23 +175,24 @@
       
     <h1>Categories</h1>
     <ul id="recent_posts">
-              <li><a href="../category/linuxying-yong.html">linux应用</a></li>
-              <li><a href="../category/misc.html">misc</a></li>
-              <li><a href="../category/ke-tang-bi-ji.html">课堂笔记</a></li>
+              <li><a href="../category/essays.html">Essays</a></li>
+              <li><a href="../category/linux.html">Linux</a></li>
+              <li><a href="../category/notes.html">Notes</a></li>
           </ul>
   </section>
    
  -->
   <section>
   <h1>Tags</h1>
-      <a href="../tag/python.html">python</a>,      <a href="../tag/xiao-yuan-wang.html">校园网</a>,      <a href="../tag/ubuntu1204.html">ubuntu12.04</a>,      <a href="../tag/gong-cheng-you-hua-fang-fa.html">工程优化方法</a>,      <a href="../tag/inodeclient.html">inodeClient</a>    </section>
+      <a href="../tag/gong-cheng-you-hua-fang-fa.html">工程优化方法</a>,      <a href="../tag/python.html">python</a>,      <a href="../tag/linuxying-yong.html">linux应用</a>,      <a href="../tag/ubuntu1204.html">ubuntu12.04</a>,      <a href="../tag/mplayer.html">mplayer</a>,      <a href="../tag/xiao-yuan-wang.html">校园网</a>,      <a href="../tag/inodeclient.html">inodeClient</a>    </section>
 
     
     <section>
         <h1>Social</h2>
         <ul>
             <li><a href="http://bluedream.me/" type="application/rss+xml" rel="alternate">RSS</a></li>
-                    <li><a href="http://googleplus.com" target="_blank">G+</a></li>
+                    <li><a href="https://plus.google.com/u/0/115690930397939734244/posts" target="_blank">Google+</a></li>
+                    <li><a href="http://weibo.com/u/1259626554" target="_blank">weibo</a></li>
                 </ul>
     </section>
       <section>
