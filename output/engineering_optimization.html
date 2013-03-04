@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Blue Dream</title>
+  <meta name="author" content="lijsf">
+
+    
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link href="./favicon.png" rel="icon">
+  <link href="./theme/css/main.css" media="screen, projection"
+        rel="stylesheet" type="text/css">
+		<link href="./theme/css/default.css" media="screen, projection"
+        rel="stylesheet" type="text/css">
+  <script src="./theme/js/modernizr-2.0.js"></script>
+  <script src="./theme/js/ender.js"></script>
+  <script src="./theme/js/octopress.js" type="text/javascript"></script>
+
+  <script type="text/javascript"
+	    src="https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+	</script>
+
+
+  <link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic"
+        rel="stylesheet" type="text/css">
+  <link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic"
+        rel="stylesheet" type="text/css">
+</head><body>
+  <header role="banner"><hgroup>
+<h1><a href="./">Blue Dream</a></h1>
+<h2>世事洞察皆学问,人情练达即文章</h2>
+</hgroup>
+<div class="social right">
+
+	<a class="google" href="li0shuangjiang@gmail.com" title="Google+">Google+</a>
+
+	<a class="twitter" href="https://twitter.com/bluedream" title="Twitter">Twitter</a>
+
+	<a class="github" href="https://github.com/lijsf" title="GitHub">GitHub</a>
+
+
+	<a class="rss" href=" ./feeds" title="RSS">RSS</a>
+
+</div></header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="http://bluedream.me/" rel="subscribe-rss">RSS</a></li>
+  </ul>
+
+<!-- TODO: add search here-->
+<form action="" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:." />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+
+<ul class="main-navigation">
+  <li><a href="./">Home</a></li>
+  <li><a href="./archives.html">Archives</a></li>
+            <li><a href="./category/essays.html">Essays</a></li>
+            <li><a href="./category/linux.html">Linux</a></li>
+            <li><a href="./category/notes.html">Notes</a></li>
+    <li><a href="./about.html">About</a></li>
+            <!-- TODO: add categories here? -->
+  </ul></nav>
+  <div id="main">
+    <div id="content">
+      <div>
+	<article class="hentry" role="article">
+	<header>
+          <h1 class="entry-title">工程优化方法</h1>
+          <p class="meta"><time datetime="2012-12-22T10:20:00" pubdate>2012 十二月 22 六</time></p>
+</header>
+
+  <div class="entry-content"><h1>题目描述</h1>
+<p>(1).  使用最速下降法求解以下两个函数的极小值。</p>
+<p>$$ F_1=\sum_{i=1}^n(x_i^2-10\cos (2\pi x_i)+10) \quad x_i \in [-5,5],i=1,2,3 $$</p>
+<p>$$ F_2=\frac {1}{4000} \sum_{i=1}^n {x_i^2}-\prod_{i=1}^n \cos (\frac {x_i}{\sqrt i})+1 \quad x_i \in [0,600],i=1,2,3 $$</p>
+<p>(2).  使用DFP算法求解(1)中的两个函数的极小值。</p>
+<h1>程序实现</h1>
+<p>对这两个题目，算法是给定的，所需要的只是手工求出其梯度向量函数，并且用代码将函数本身和梯度函数实现。
+  之后随时可以调用这两个函数计算某一点的函数值和梯度向量值。最后按照最速下降法和DFP算法的框图实现这两个
+  求解最小值的函数。实现过程中的一个需要注意的地方是求函数值时如入为一个向量，输出为一个数值，而梯度则输入和
+  输出都是向量。</p>
+<p>本程序考虑到便捷性和我个人对语言的熟练程度，我选择了python语言，该语言方便快捷，是一种优秀的通用编程语言。
+  同时，python具有两个优秀的科学计算库：numpy和scipy，这两个库完全可以替代Matlab，完成科学计算。本作业即采用
+  了numpy库进行矩阵和向量计算。由于这两个库都是由C语言完成的，所以运算速度非常快。</p>
+<p>具体的程序可以参考最后一部分的程序清单。主要包括以下几个部分：</p>
+<ul>
+<li>eps：定义的一个全局变量，控制搜索的精度</li>
+<li>F1(x)：计算原问题中的第一个函数在x点的函数值</li>
+<li>F2(x)：计算原问题中的第二个函数在x点的函数值</li>
+<li>gF1(x): 计算原问题中的第一个函数在x点的梯度向量</li>
+<li>gF2(x): 计算原问题中的第二个函数在x点的梯度向量</li>
+<li>fb_search(fx,g,x,alpha)：进退法线性搜索函数，从x点开始求得使函数fx(x+a*g)值最小的参数 a,g为函数fx在x的的梯度
+    alpha为起始点，默认初始步长为 1, eps=1e-6</li>
+<li>fanshu(x)：计算向量x的范数</li>
+<li>sdm(f,g,x)：sdm法计算函数f的最小值，f原函数，g为f的梯度计算函数，x为搜索起始点</li>
+<li>dfp(f,g,x,n)：dfp法计算函数f的最小值，f原函数，g为f的梯度计算函数，x为搜索起始点</li>
+</ul>
+<h1>结果展示</h1>
+<p>下面是程序的运算结果：</p>
+<p><img alt="问题1的最速下降法结果展示" src="./images/pro1_s.jpg" /></p>
+<p><img alt="问题2的最速下降法结果展示" src="./images/pro2_s.jpg" /></p>
+<p><img alt="问题1的DFP法结果展示" src="./images/pro1_d.jpg" /></p>
+<p><img alt="问题2的DFP法结果展示" src="./images/pro2_d.jpg" /></p>
+<h1>结果分析</h1>
+<p>(1).  从程序的运行结果来看，两种算法都基本实现了要求，都能顺利计算出函数的最小值。相对而言，最速下降法算法的迭代
+  步数要少的多，很快就到达了最小值点。</p>
+<p>(2).  在实现的过程中，计算最小值时需要线性搜索一个参数lambda使得f(x+lambda*g)最小，该参数的确定我使用了成功
+  失败法，但该方法的起始搜索点选择，即lambda的初始值的算则，对程序的运行结果影响很大，选的过小的话往往会使得计算结果在初始点附近陷入
+  无穷搜索状态，且不收敛。后来发现选择一个较大的值作为初始搜索点是比较好的，能很快达到搜索点，至于原因，还没想明白。</p>
+<p>(3).  在实现的过程中未考虑数据的范围，测试时只考虑其实搜索点的选择范围，在题目给定的范围之内，算法都能很快到达函数的
+  最小值点，结果比较好。</p>
+<p>(4).  有待进一步改进程序，使得在一位搜索时，解决因为步长过大导致搜索区间超出给定的可行域的问题。</p>
+<h1>课程总结</h1>
+<p>数值算法在实际应用中因为很少用到，所以在程序实现时一时还不太习惯，不过通过这次实验，我也发现数学方法不仅仅是局限在
+  理论上的方法，在具体应用中也是有很大的应用价值的。</p>
+<p>优化方法的应用应当是很广泛的，之前我在参加腾讯的一个竞赛时，所做的一个参赛作品中用到了遗传算法来对我生成的一些结果
+  进行优化筛选。这个过程和本课程的结合度比较紧密，优化的过程也是一个迭代的过程，现在想想，当时的优化过程也可以抽象为
+  一个求函数最大值的过程，不过函数的可行域是离散的点。我简单粗暴的的采用了遍历所有可能的方法，在当时的条件下，因为要
+  搜索的点不多，所以是可行的，但如果能结合本课程的优化方法，应当可以减少很多运算量。这一想法我会留到考试后再去实践。</p>
+<p>工程优化这门课的工程性应该是很强的，希望以后的课本中能引入更多的可实践性强的课题。</p>
+<h1>程序清单</h1>
+<div class="codehilite"><pre>    <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
+    <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="o">*</span>
+
+    <span class="n">eps</span><span class="o">=</span><span class="mf">1e-6</span>
+    <span class="c"># 计算函数F1在x点的值</span>
+    <span class="k">def</span> <span class="nf">F1</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="c">#x*x-10*cos(2*pi*x)+10</span>
+        <span class="n">i</span><span class="o">=</span><span class="mi">0</span>
+        <span class="nb">sum</span><span class="o">=</span><span class="mi">0</span>
+        <span class="k">while</span> <span class="n">i</span><span class="o">&lt;</span><span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+            <span class="nb">sum</span> <span class="o">+=</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-</span><span class="mi">10</span><span class="o">*</span><span class="n">cos</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">+</span><span class="mi">10</span><span class="p">)</span>
+            <span class="n">i</span><span class="o">=</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span>
+        <span class="k">return</span> <span class="nb">sum</span>
+
+    <span class="c">#计算函数F2在x点的值</span>
+    <span class="k">def</span> <span class="nf">F2</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="n">sum1</span><span class="o">=</span><span class="mi">0</span>
+        <span class="n">i</span><span class="o">=</span><span class="mi">0</span>
+        <span class="k">while</span> <span class="n">i</span><span class="o">&lt;</span><span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+            <span class="n">sum1</span> <span class="o">+=</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="n">i</span><span class="o">+=</span><span class="mi">1</span>
+        <span class="n">sum1</span><span class="o">/=</span><span class="mi">4000</span>
+
+        <span class="n">sum2</span><span class="o">=</span><span class="mi">0</span>
+        <span class="n">i</span><span class="o">=</span><span class="mi">0</span>
+        <span class="k">while</span> <span class="n">i</span><span class="o">&lt;</span><span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+            <span class="n">sum2</span><span class="o">*=</span><span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">/</span><span class="n">sqrt</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+            <span class="n">i</span><span class="o">+=</span><span class="mi">1</span>
+        <span class="k">return</span> <span class="n">sum1</span><span class="o">-</span><span class="n">sum2</span><span class="o">+</span><span class="mi">1</span>
+
+    <span class="c">#计算F1在x点的梯度向量的值</span>
+    <span class="k">def</span> <span class="nf">gF1</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mi">2</span><span class="o">*</span><span class="n">x</span><span class="o">+</span><span class="mi">20</span><span class="o">*</span><span class="n">pi</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+    <span class="c">#计算F2在x点的梯度值</span>
+    <span class="k">def</span> <span class="nf">gF2</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="n">res</span><span class="o">=</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">res</span><span class="o">=</span><span class="n">x</span><span class="o">/</span><span class="mi">2000</span>
+        <span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+=</span><span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">*</span><span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span><span class="o">*</span><span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">/</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+        <span class="n">res</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+=</span><span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span><span class="o">*</span><span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">*</span><span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">/</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span><span class="o">/</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">res</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">+=</span><span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">/</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span><span class="o">*</span><span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">*</span><span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span><span class="o">/</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span>
+
+    <span class="c">#最速下降法的线性搜索：进退法线性搜索，从x点开始求得使函数fx(x+a*g)值最小的参数 a,g为函数fx在x的的梯度</span>
+    <span class="c">#alpha为起始点，默认初始步长为 1, eps=1e-6</span>
+    <span class="k">def</span> <span class="nf">fb_search</span><span class="p">(</span><span class="n">fx</span><span class="p">,</span><span class="n">g</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">alpha</span><span class="p">):</span>
+        <span class="k">global</span> <span class="n">eps</span>
+        <span class="n">step</span><span class="o">=</span><span class="mi">1</span>
+        <span class="n">fai1</span><span class="o">=</span><span class="n">fx</span><span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="n">alpha</span><span class="o">*</span><span class="n">g</span><span class="p">)</span>
+
+        <span class="c">#开始搜索</span>
+        <span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">fai2</span><span class="o">=</span><span class="n">fx</span><span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="p">(</span><span class="n">alpha</span><span class="o">+</span><span class="n">step</span><span class="p">)</span><span class="o">*</span><span class="n">g</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">fai2</span><span class="o">&lt;</span><span class="n">fai1</span><span class="p">:</span>
+                <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="o">+</span><span class="n">step</span>
+                <span class="n">fai1</span><span class="o">=</span><span class="n">fai2</span>
+                <span class="n">step</span><span class="o">=</span><span class="n">step</span><span class="o">+</span><span class="n">step</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">step</span><span class="p">)</span><span class="o">&lt;=</span><span class="n">eps</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">alpha</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">step</span><span class="o">=-</span><span class="n">step</span><span class="o">/</span><span class="mi">4</span>
+    <span class="c">#求向量的范数</span>
+    <span class="k">def</span> <span class="nf">fanshu</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="o">*</span><span class="n">x</span>
+        <span class="nb">sum</span><span class="o">=</span><span class="mi">0</span>
+        <span class="n">i</span><span class="o">=</span><span class="mi">0</span>
+        <span class="k">while</span> <span class="n">i</span><span class="o">&lt;</span><span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+            <span class="nb">sum</span><span class="o">+=</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">i</span><span class="o">+=</span><span class="mi">1</span>
+        <span class="k">return</span> <span class="n">sqrt</span><span class="p">(</span><span class="nb">sum</span><span class="p">)</span>
+
+    <span class="c">#最速下降法(steepest descent methord)求解函数极小值</span>
+    <span class="k">def</span> <span class="nf">sdm</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="n">g</span><span class="p">,</span><span class="n">x</span><span class="p">):</span>
+        <span class="k">global</span> <span class="n">eps</span>
+        <span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">s</span><span class="o">=-</span><span class="n">g</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">fanshu</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="o">&lt;=</span><span class="n">eps</span><span class="p">:</span>
+                <span class="k">print</span> <span class="n">x</span><span class="p">,</span><span class="n">F1</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">x</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">alpha</span><span class="o">=</span><span class="n">fb_search</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="o">+</span><span class="n">alpha</span><span class="o">*</span><span class="n">s</span>
+                <span class="k">print</span> <span class="n">x</span><span class="p">,</span><span class="n">F1</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="c">#DFP法求解函数最小值</span>
+    <span class="k">def</span> <span class="nf">dfp</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="n">g</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">n</span><span class="p">):</span>
+        <span class="k">global</span> <span class="n">eps</span>
+        <span class="n">x1</span><span class="o">=</span><span class="n">x</span>
+        <span class="n">x2</span><span class="o">=</span><span class="mi">0</span>
+        <span class="n">g1</span><span class="o">=</span><span class="n">g</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">g2</span><span class="o">=</span><span class="mi">0</span>
+        <span class="k">if</span> <span class="n">fanshu</span><span class="p">(</span><span class="n">g1</span><span class="p">)</span><span class="o">&lt;=</span><span class="n">eps</span><span class="p">:</span>
+            <span class="k">print</span> <span class="n">x1</span><span class="p">,</span><span class="n">f</span><span class="p">(</span><span class="n">x1</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">x1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">):</span>
+                <span class="n">k</span><span class="o">=</span><span class="mi">1</span>
+                <span class="n">H1</span><span class="o">=</span><span class="n">eye</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+                <span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">):</span>
+                    <span class="n">z1</span><span class="o">=-</span><span class="n">dot</span><span class="p">(</span><span class="n">H1</span><span class="p">,</span><span class="n">g1</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+                    <span class="n">z1</span><span class="o">.</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">n</span><span class="p">)</span>
+                    <span class="c">#线性搜索</span>
+                    <span class="n">alpha</span><span class="o">=</span><span class="n">fb_search</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="n">z1</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">x1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+
+                    <span class="n">x2</span><span class="o">=</span><span class="n">x1</span><span class="o">+</span><span class="n">alpha</span><span class="o">*</span><span class="n">z1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="n">g2</span><span class="o">=</span><span class="n">g</span><span class="p">(</span><span class="n">x2</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">fanshu</span><span class="p">(</span><span class="n">g2</span><span class="p">)</span><span class="o">&lt;=</span><span class="n">eps</span><span class="p">:</span>
+                        <span class="k">print</span> <span class="n">x2</span><span class="p">,</span><span class="n">f</span><span class="p">(</span><span class="n">x2</span><span class="p">)</span>
+                        <span class="k">return</span> <span class="n">x2</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">if</span><span class="p">(</span><span class="n">k</span><span class="o">==</span><span class="n">n</span><span class="p">):</span>
+                            <span class="n">x1</span><span class="o">=</span><span class="n">x2</span>
+                            <span class="n">g1</span><span class="o">=</span><span class="n">g2</span>
+                            <span class="k">break</span>
+                        <span class="n">delta_x</span><span class="o">=</span><span class="n">x2</span><span class="o">-</span><span class="n">x1</span>
+                        <span class="n">delta_g</span><span class="o">=</span><span class="n">g2</span><span class="o">-</span><span class="n">g1</span>
+                        <span class="n">garma</span><span class="o">=</span><span class="n">dot</span><span class="p">(</span><span class="n">H1</span><span class="p">,</span><span class="n">delta_g</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+                        <span class="c">#更新x1,g1</span>
+                        <span class="n">x1</span><span class="o">=</span><span class="n">x2</span>
+                        <span class="n">g1</span><span class="o">=</span><span class="n">g2</span>
+                        <span class="c">#更新H</span>
+                        <span class="n">H1</span><span class="o">=</span><span class="n">H1</span><span class="o">+</span><span class="n">dot</span><span class="p">(</span><span class="n">delta_x</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span><span class="n">delta_x</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">n</span><span class="p">))</span><span class="o">/</span><span class="n">dot</span><span class="p">(</span><span class="n">delta_x</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">n</span><span class="p">),</span><span class="n">delta_g</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span><span class="o">-</span><span class="n">dot</span><span class="p">(</span><span class="n">garma</span><span class="p">,</span><span class="n">garma</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">n</span><span class="p">))</span><span class="o">/</span><span class="n">dot</span><span class="p">(</span><span class="n">dot</span><span class="p">(</span><span class="n">delta_g</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">n</span><span class="p">),</span><span class="n">H1</span><span class="p">),</span><span class="n">delta_g</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+                        <span class="k">print</span> <span class="n">k</span><span class="p">,</span><span class="n">x1</span><span class="p">,</span><span class="n">f</span><span class="p">(</span><span class="n">x1</span><span class="p">)</span>
+                        <span class="n">k</span><span class="o">+=</span><span class="mi">1</span>
+
+    <span class="c">#主函数</span>
+    <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+        <span class="c">#import pdb</span>
+        <span class="c">#pdb.set_trace()</span>
+        <span class="k">print</span> <span class="s">&quot;problem 1 with steepest descent methord:&quot;</span>
+        <span class="n">sdm</span><span class="p">(</span><span class="n">F1</span><span class="p">,</span><span class="n">gF1</span><span class="p">,</span><span class="n">array</span><span class="p">([</span><span class="mi">5</span><span class="p">,</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="k">print</span>
+        <span class="k">print</span> <span class="s">&quot;problem 2 with steepest descent methord:&quot;</span>
+        <span class="n">sdm</span><span class="p">(</span><span class="n">F2</span><span class="p">,</span><span class="n">gF2</span><span class="p">,</span><span class="n">array</span><span class="p">([</span><span class="mi">100</span><span class="p">,</span><span class="mi">200</span><span class="p">,</span><span class="mi">3</span><span class="p">]))</span>
+        <span class="k">print</span>
+        <span class="k">print</span> <span class="s">&quot;problem 1 with dfp methord:&quot;</span>
+        <span class="n">dfp</span><span class="p">(</span><span class="n">F1</span><span class="p">,</span><span class="n">gF1</span><span class="p">,</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="o">-</span><span class="mi">3</span><span class="p">]),</span><span class="mi">3</span><span class="p">)</span>
+        <span class="k">print</span>
+        <span class="k">print</span> <span class="s">&quot;problem 2 with dfp methord:&quot;</span>
+        <span class="n">dfp</span><span class="p">(</span><span class="n">F2</span><span class="p">,</span><span class="n">gF2</span><span class="p">,</span><span class="n">array</span><span class="p">([</span><span class="mi">100</span><span class="p">,</span><span class="mi">200</span><span class="p">,</span><span class="mi">3</span><span class="p">]),</span><span class="mi">3</span><span class="p">)</span>
+</pre></div></div>
+	<footer>
+	<p class="meta">
+  <span class="byline author vcard">
+    Posted by <span class="fn">lijsf</span>
+  </span>
+  <time datetime="2012-12-22T10:20:00" pubdate>2012 十二月 22 六</time>    <span class="categories">
+        <a class="category" href="./tag/gong-cheng-you-hua-fang-fa.html">工程优化方法</a>
+        <a class="category" href="./tag/python.html">python</a>
+      </span>
+  </p>	</footer>
+	
+	<!--这是一段注释。注释掉下一篇文章，暂时还没实现这个功能。-->
+	<!--
+	<p class="meta">
+
+		<a class="basic-alignment left" href="/2012/09/new-wacom/" title="Previous Post: 入手Wacom Bamboo CTL470">&laquo;工程优化方法</a>
+	
+	<a class="basic-alignment right" href="/2013/01/leave-google/" title="Next Post: Richard Stallman仍然是对的">Richard Stallman仍然是对的 &raquo;</a>
+
+	</p>
+	-->
+
+	</article>
+		<section>
+	<h1>Comments</h1>
+	<!-- UY BEGIN -->
+	<div id="uyan_frame"></div>
+	<script type="text/javascript" id="UYScript" src="http://v1.uyan.cc/js/iframe.js?UYUserId=1736030" async=""></script>
+	<!-- UY END -->
+	</section>
+	
+	</div>
+<aside class="sidebar">
+  <section>
+    <h1>Recent Posts</h1>
+    <ul id="recent_posts">
+            <li class="post">
+          <a href="./mplayerzi-mu-zhu-wen-ti.html">mplayer字幕诸问题</a>
+      </li>
+            <li class="post">
+          <a href="./you-dao-yun-bi-ji-gong-xiang-de-chromecha-jian-kai-fa.html">有道云笔记共享的chrome插件开发</a>
+      </li>
+            <li class="post">
+          <a href="./inodeClient_install.html">ubuntu12.04 64位系统安装校园网客户端inodeClient</a>
+      </li>
+            <li class="post">
+          <a href="./engineering_optimization.html">工程优化方法</a>
+      </li>
+          </ul>
+  </section>
+  <!--
+    <section>
+      
+    <h1>Categories</h1>
+    <ul id="recent_posts">
+              <li><a href="./category/essays.html">Essays</a></li>
+              <li><a href="./category/linux.html">Linux</a></li>
+              <li><a href="./category/notes.html">Notes</a></li>
+          </ul>
+  </section>
+   
+ -->
+  <section>
+  <h1>Tags</h1>
+      <a href="./tag/gong-cheng-you-hua-fang-fa.html">工程优化方法</a>,      <a href="./tag/python.html">python</a>,      <a href="./tag/linuxying-yong.html">linux应用</a>,      <a href="./tag/ubuntu1204.html">ubuntu12.04</a>,      <a href="./tag/mplayer.html">mplayer</a>,      <a href="./tag/xiao-yuan-wang.html">校园网</a>,      <a href="./tag/inodeclient.html">inodeClient</a>    </section>
+
+    
+    <section>
+        <h1>Social</h2>
+        <ul>
+            <li><a href="http://bluedream.me/" type="application/rss+xml" rel="alternate">RSS</a></li>
+                    <li><a href="https://plus.google.com/u/0/115690930397939734244/posts" target="_blank">Google+</a></li>
+                    <li><a href="http://weibo.com/u/1259626554" target="_blank">weibo</a></li>
+                </ul>
+    </section>
+      <section>
+        <h1>Blogroll</h2>
+        <ul>
+                    <li><a href="http://docs.notmyidea.org/alexis/pelican/" target="_blank">Pelican</a></li>
+                    <li><a href="http://python.org" target="_blank">Python.org</a></li>
+                    <li><a href="http://jinja.pocoo.org" target="_blank">Jinja2</a></li>
+                    <li><a href="http://bluedream.me" target="_blank">Bluedream</a></li>
+                </ul>
+    </section>
+</aside>      <aside class="sidebar">
+  <section>
+    <h1>Recent Posts</h1>
+    <ul id="recent_posts">
+            <li class="post">
+          <a href="./mplayerzi-mu-zhu-wen-ti.html">mplayer字幕诸问题</a>
+      </li>
+            <li class="post">
+          <a href="./you-dao-yun-bi-ji-gong-xiang-de-chromecha-jian-kai-fa.html">有道云笔记共享的chrome插件开发</a>
+      </li>
+            <li class="post">
+          <a href="./inodeClient_install.html">ubuntu12.04 64位系统安装校园网客户端inodeClient</a>
+      </li>
+            <li class="post">
+          <a href="./engineering_optimization.html">工程优化方法</a>
+      </li>
+          </ul>
+  </section>
+  <!--
+    <section>
+      
+    <h1>Categories</h1>
+    <ul id="recent_posts">
+              <li><a href="./category/essays.html">Essays</a></li>
+              <li><a href="./category/linux.html">Linux</a></li>
+              <li><a href="./category/notes.html">Notes</a></li>
+          </ul>
+  </section>
+   
+ -->
+  <section>
+  <h1>Tags</h1>
+      <a href="./tag/gong-cheng-you-hua-fang-fa.html">工程优化方法</a>,      <a href="./tag/python.html">python</a>,      <a href="./tag/linuxying-yong.html">linux应用</a>,      <a href="./tag/ubuntu1204.html">ubuntu12.04</a>,      <a href="./tag/mplayer.html">mplayer</a>,      <a href="./tag/xiao-yuan-wang.html">校园网</a>,      <a href="./tag/inodeclient.html">inodeClient</a>    </section>
+
+    
+    <section>
+        <h1>Social</h2>
+        <ul>
+            <li><a href="http://bluedream.me/" type="application/rss+xml" rel="alternate">RSS</a></li>
+                    <li><a href="https://plus.google.com/u/0/115690930397939734244/posts" target="_blank">Google+</a></li>
+                    <li><a href="http://weibo.com/u/1259626554" target="_blank">weibo</a></li>
+                </ul>
+    </section>
+      <section>
+        <h1>Blogroll</h2>
+        <ul>
+                    <li><a href="http://docs.notmyidea.org/alexis/pelican/" target="_blank">Pelican</a></li>
+                    <li><a href="http://python.org" target="_blank">Python.org</a></li>
+                    <li><a href="http://jinja.pocoo.org" target="_blank">Jinja2</a></li>
+                    <li><a href="http://bluedream.me" target="_blank">Bluedream</a></li>
+                </ul>
+    </section>
+</aside>    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - lijsf -
+  <span class="credit">Powered by <a href="http://getpelican.com">Pelican</a></span>
+</p></footer>
+  </body>
+</html>
