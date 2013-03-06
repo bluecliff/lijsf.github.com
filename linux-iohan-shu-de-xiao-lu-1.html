@@ -74,45 +74,102 @@
       <div>
 	<article class="hentry" role="article">
 	<header>
-          <h1 class="entry-title">ubuntu12.04 64位系统安装校园网客户端inodeClient</h1>
-          <p class="meta"><time datetime="2013-01-12T10:20:00" pubdate>2013 一月 12 六</time></p>
+          <h1 class="entry-title">linux IO函数的效率(1)</h1>
+          <p class="meta"><time datetime="2013-03-06T00:00:00" pubdate>2013 三月 06 三</time></p>
 </header>
 
-  <div class="entry-content"><h1>主要步骤</h1>
-<p>(1).  下载安装包,解压到相应目录。</p>
-<p>(2).  64位系统，需要先安装32位的运行库：</p>
-<div class="codehilite"><pre>apt-get install ia32-libs* getlibs
+  <div class="entry-content"><p>linux下iso-c实现即GNU的glibc库，IO库主要是头文件stdio.h文件下的一些函数。一般情况下应用到的
+IO操作基本就是该库的IO函数的使用。但同时linux内核也提供了IO的系统调用。本文是在阅读Advanced
+programming in the UNIX environment这本书时做的笔记，主要是关于ISO-C的IO库和linux系统调用IO的效率对比。</p>
+<h2>linux系统调用的IO</h2>
+<p>linux系统的文件IO大部分情况只需要用到5个函数：open,read,write,lseek和close。其他的还有一些
+应用于原子操作以及文件共享等特殊应用的IO函数，如：dup,fcntl,sync,fsync和ioctl等函数。这些函
+数都是linux/unix系统提供的系统调用，由内核完成。</p>
+<div class="codehilite"><pre><span class="cp">#include &lt;fcntl.h&gt;</span>
+<span class="kt">int</span> <span class="nf">open</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">pathname</span><span class="p">,</span> <span class="kt">int</span> <span class="n">flag</span><span class="p">,</span> <span class="p">...</span><span class="cm">/* mode_t mode */</span><span class="p">);</span>
+<span class="kt">int</span> <span class="nf">create</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">pathname</span><span class="p">,</span> <span class="kt">mode_t</span> <span class="n">mode</span><span class="p">);</span>
+
+<span class="cp">#include &lt;unistd.h&gt;</span>
+<span class="kt">int</span> <span class="nf">close</span><span class="p">(</span><span class="kt">int</span> <span class="n">filedes</span><span class="p">);</span>
+<span class="kt">off_t</span> <span class="nf">lseek</span><span class="p">(</span><span class="kt">int</span> <span class="n">filedes</span><span class="p">,</span> <span class="kt">off_t</span> <span class="n">offset</span><span class="p">,</span> <span class="kt">int</span> <span class="n">whence</span><span class="p">);</span>
+<span class="kt">ssize_t</span> <span class="nf">read</span><span class="p">(</span><span class="kt">int</span> <span class="n">filedes</span><span class="p">,</span> <span class="kt">void</span><span class="o">*</span> <span class="n">buf</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">nbytes</span><span class="p">);</span>
+<span class="kt">ssize_t</span> <span class="nf">write</span><span class="p">(</span><span class="kt">int</span> <span class="n">filedes</span><span class="p">,</span> <span class="k">const</span> <span class="kt">void</span><span class="o">*</span> <span class="n">buf</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">nbytes</span><span class="p">);</span>
 </pre></div>
 
 
-<p>若源中找不到getlibs库，可去http://forum.ubuntu.org.cn/viewtopic.php?t=205525下载deb包安装。</p>
-<p>(3).  进入inodeClient目录，修改iNodeCLient根目录下的enablecards.ps。将其中第二行cd /etc/sysconfig/network-scripts
- 修改为cd /etc/network,再运行install.sh。注意install.sh的权限。</p>
-<p>(4).  安装后可通过 </p>
-<div class="codehilite"><pre>ps -e|grep A
+<p>上面即几个常用IO函数的原型，顾名思义，也很容易理解其功能。主要有这些需要注意的：对于内核而言，
+所有打开的文件都通过文件描述符引用，即一个证书，默认0,1,2分别对应标准输入，标准输出，标准出错。
+文件的打开模式有多种，并且是否打开成功于进程有效id,进程的实际id都有关，同时也与文件的stat有关。</p>
+<p>系统调用级的IO函数都是不带缓冲的IO,write和read函数都把数据放在一个buf中写入磁盘，或者从磁盘读进
+buf,该buf大小的选取对IO效率有很大的影响。最高效的选取应当是一个文件系统的block的大小，在linux的
+ext4文件系统上，该数值是4096，所以理论上将是选取4096会得到一个高效的IO传输。</p>
+<div class="codehilite"><pre><span class="cp">#include &lt;unistd.h&gt;</span>
+<span class="cp">#include &lt;stdio.h&gt;</span>
+<span class="cp">#define BUFFSIZE 8192</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span><span class="o">*</span> <span class="n">argv</span><span class="p">[])</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">n</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">bsize</span><span class="o">=</span><span class="n">atoi</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+    <span class="kt">char</span> <span class="n">buf</span><span class="p">[</span><span class="n">BUFFSIZE</span><span class="p">];</span>
+    <span class="k">while</span><span class="p">((</span><span class="n">n</span><span class="o">=</span><span class="n">read</span><span class="p">(</span><span class="n">STDIN_FILENO</span><span class="p">,</span> <span class="n">buf</span><span class="p">,</span> <span class="n">bsize</span><span class="p">))</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">write</span><span class="p">(</span><span class="n">STDOUT_FILENO</span><span class="p">,</span> <span class="n">buf</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span><span class="o">!=</span><span class="n">n</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">printf</span><span class="p">(</span><span class="s">&quot;write error</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+            <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">n</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&quot;read erro&quot;</span><span class="p">);</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
 </pre></div>
 
 
-<p>命令查看是否安装成功，结果类似于：1694 ?        00:00:00 AuthenMngServic
-表示安装成功。若无该服务进程，则安装不成功。</p>
-<p>(5). 安装后， 若运行不成功，多会提示缺少libtiff.so.3和libjpeg.so.62两个库文件，32位的系统可以直接通过下面的命令建立软链接：</p>
-<div class="codehilite"><pre>ln -s /usr/lib/libtiff.so.3 /usr/lib/i386-linux-gnu/libtiff.so.4.x. x
+<p>上述程序完成对系统调用read和write效率的测试，实际上是从标准输入复制数据到标准输出。可选
+的参数决定每次IO的buf的大小。使用time工具可以获取程序执行的时间。测试的数据in文件是100Ｍ
+的一个英文文本文件。</p>
+<p>首先选择buf的大小为1,即每次只读写1个字节。</p>
+<div class="codehilite"><pre>lijsf@echolii-PC:chapt3<span class="nv">$ </span><span class="nb">time</span> ./a.out 1 &lt;in&gt;out
+real    2m46.823s
+user    0m7.768s
+sys     2m38.034s
 </pre></div>
 
 
-<p>libjpeg.so.62也可类似处理。若找不到对应的较新的库的位置，可用命令locate libtiff.so查找其位置。</p>
-<p>(6).  对64位系统，在处理litfiff或者libjpeg库时可能建立软链接后因为库inode不识别64位的libtiff和libjpeg而不能运行。可以去
- 微盘下载这两个文件，放到/usr/lib目录下即可。</p></div>
+<p>结果可以看到，实际用时超过了2分钟，其中系统调用占用了绝大多数时间。</p>
+<p>再选择buf大小为8192：</p>
+<div class="codehilite"><pre>lijsf@echolii-PC:chapt3<span class="nv">$ </span><span class="nb">time</span> ./a.out 8192 &lt;in&gt;out
+real    0m0.566s
+user    0m0.000s
+sys     0m0.152s
+</pre></div>
+
+
+<p>结果显示效率相对于上次的结果要好的多，原因时，此时系统调用的数目是上一次的4096分之一。实际上
+由于block大小是4096,每一次系统调用只能读写4096字节，本次实验中虽然名面上每次读写了8192字节，
+实际上系统会分两次读写，每次依然读写4096字节。</p>
+<p>最后选择每次读写4096字节，即理论上的最优大小。</p>
+<div class="codehilite"><pre>lijsf@echolii-PC:chapt3<span class="nv">$ </span><span class="nb">time</span> ./a.out 4096 &lt;in&gt;out
+real    0m0.131s
+user    0m0.000s
+sys     0m0.128s
+</pre></div>
+
+
+<p>对比上述8192的结果，可以看到，系统调用的时间并未有大的变化，但程序执行的实际时间却有更大的优化。
+原因是，在选择了8192字节的buf时，系统不能一次读写完整个buf，所以需要花费时间等待系统IO完成的中
+断。这会导致系统挂起执行线程，去执行其他的线程。所以程序的系统运行时间并未增加，但实际运行时间却
+增加了。</p>
+<p>综上所述，在采用系统IO函数时，需要注意IO的效率，考虑合适的读写缓存buf，从而可以明显的改善程序的
+在IO上的运行效率。</p></div>
 	<footer>
 	<p class="meta">
   <span class="byline author vcard">
     Posted by <span class="fn">lijsf</span>
   </span>
-  <time datetime="2013-01-12T10:20:00" pubdate>2013 一月 12 六</time>    <span class="categories">
-        <a class="category" href="./tag/ubuntu1204.html">ubuntu12.04</a>
-        <a class="category" href="./tag/inodeclient.html">inodeClient</a>
-        <a class="category" href="./tag/linuxying-yong.html">linux应用</a>
-        <a class="category" href="./tag/xiao-yuan-wang.html">校园网</a>
+  <time datetime="2013-03-06T00:00:00" pubdate>2013 三月 06 三</time>    <span class="categories">
+        <a class="category" href="./tag/unixhuan-jing-gao-ji-bian-cheng.html">unix环境高级编程</a>
+        <a class="category" href="./tag/linuxbian-cheng.html">linux编程</a>
       </span>
   </p>	</footer>
 	
@@ -120,7 +177,7 @@
 	<!--
 	<p class="meta">
 
-		<a class="basic-alignment left" href="/2012/09/new-wacom/" title="Previous Post: 入手Wacom Bamboo CTL470">&laquo;ubuntu12.04 64位系统安装校园网客户端inodeClient</a>
+		<a class="basic-alignment left" href="/2012/09/new-wacom/" title="Previous Post: 入手Wacom Bamboo CTL470">&laquo;linux IO函数的效率(1)</a>
 	
 	<a class="basic-alignment right" href="/2013/01/leave-google/" title="Next Post: Richard Stallman仍然是对的">Richard Stallman仍然是对的 &raquo;</a>
 

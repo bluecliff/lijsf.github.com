@@ -1,5 +1,88 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Blue Dream</title><link href="http://bluedream.me/" rel="alternate"></link><link href="http://bluedream.me/feeds/all-cn.atom.xml" rel="self"></link><id>http://bluedream.me/</id><updated>2013-03-02T22:23:00+08:00</updated><entry><title>mplayer字幕诸问题</title><link href="http://bluedream.me/mplayerzi-mu-zhu-wen-ti.html" rel="alternate"></link><updated>2013-03-02T22:23:00+08:00</updated><author><name>lijsf</name></author><id>tag:bluedream.me,2013-03-02:mplayerzi-mu-zhu-wen-ti.html</id><summary type="html">&lt;p&gt;mplayer功能强大，是linux下播放视频，电影的不二选择，但源于其功能太过于强大，
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Blue Dream</title><link href="http://bluedream.me/" rel="alternate"></link><link href="http://bluedream.me/feeds/all-cn.atom.xml" rel="self"></link><id>http://bluedream.me/</id><updated>2013-03-06T00:00:00+08:00</updated><entry><title>linux IO函数的效率(1)</title><link href="http://bluedream.me/linux-iohan-shu-de-xiao-lu-1.html" rel="alternate"></link><updated>2013-03-06T00:00:00+08:00</updated><author><name>lijsf</name></author><id>tag:bluedream.me,2013-03-06:linux-iohan-shu-de-xiao-lu-1.html</id><summary type="html">&lt;p&gt;linux下iso-c实现即GNU的glibc库，IO库主要是头文件stdio.h文件下的一些函数。一般情况下应用到的
+IO操作基本就是该库的IO函数的使用。但同时linux内核也提供了IO的系统调用。本文是在阅读Advanced
+programming in the UNIX environment这本书时做的笔记，主要是关于ISO-C的IO库和linux系统调用IO的效率对比。&lt;/p&gt;
+&lt;h2&gt;linux系统调用的IO&lt;/h2&gt;
+&lt;p&gt;linux系统的文件IO大部分情况只需要用到5个函数：open,read,write,lseek和close。其他的还有一些
+应用于原子操作以及文件共享等特殊应用的IO函数，如：dup,fcntl,sync,fsync和ioctl等函数。这些函
+数都是linux/unix系统提供的系统调用，由内核完成。&lt;/p&gt;
+&lt;div class="codehilite"&gt;&lt;pre&gt;&lt;span class="cp"&gt;#include &amp;lt;fcntl.h&amp;gt;&lt;/span&gt;
+&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="nf"&gt;open&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;const&lt;/span&gt; &lt;span class="kt"&gt;char&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;pathname&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;flag&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;...&lt;/span&gt;&lt;span class="cm"&gt;/* mode_t mode */&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="nf"&gt;create&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;const&lt;/span&gt; &lt;span class="kt"&gt;char&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;pathname&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;mode_t&lt;/span&gt; &lt;span class="n"&gt;mode&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+
+&lt;span class="cp"&gt;#include &amp;lt;unistd.h&amp;gt;&lt;/span&gt;
+&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="nf"&gt;close&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;filedes&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="kt"&gt;off_t&lt;/span&gt; &lt;span class="nf"&gt;lseek&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;filedes&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;off_t&lt;/span&gt; &lt;span class="n"&gt;offset&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;whence&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="kt"&gt;ssize_t&lt;/span&gt; &lt;span class="nf"&gt;read&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;filedes&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;void&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;buf&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;size_t&lt;/span&gt; &lt;span class="n"&gt;nbytes&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="kt"&gt;ssize_t&lt;/span&gt; &lt;span class="nf"&gt;write&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;filedes&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="k"&gt;const&lt;/span&gt; &lt;span class="kt"&gt;void&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;buf&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;size_t&lt;/span&gt; &lt;span class="n"&gt;nbytes&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;上面即几个常用IO函数的原型，顾名思义，也很容易理解其功能。主要有这些需要注意的：对于内核而言，
+所有打开的文件都通过文件描述符引用，即一个证书，默认0,1,2分别对应标准输入，标准输出，标准出错。
+文件的打开模式有多种，并且是否打开成功于进程有效id,进程的实际id都有关，同时也与文件的stat有关。&lt;/p&gt;
+&lt;p&gt;系统调用级的IO函数都是不带缓冲的IO,write和read函数都把数据放在一个buf中写入磁盘，或者从磁盘读进
+buf,该buf大小的选取对IO效率有很大的影响。最高效的选取应当是一个文件系统的block的大小，在linux的
+ext4文件系统上，该数值是4096，所以理论上将是选取4096会得到一个高效的IO传输。&lt;/p&gt;
+&lt;div class="codehilite"&gt;&lt;pre&gt;&lt;span class="cp"&gt;#include &amp;lt;unistd.h&amp;gt;&lt;/span&gt;
+&lt;span class="cp"&gt;#include &amp;lt;stdio.h&amp;gt;&lt;/span&gt;
+&lt;span class="cp"&gt;#define BUFFSIZE 8192&lt;/span&gt;
+
+&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="nf"&gt;main&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;argc&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;char&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;argv&lt;/span&gt;&lt;span class="p"&gt;[])&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;bsize&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;atoi&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;argv&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;]);&lt;/span&gt;
+    &lt;span class="kt"&gt;char&lt;/span&gt; &lt;span class="n"&gt;buf&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;BUFFSIZE&lt;/span&gt;&lt;span class="p"&gt;];&lt;/span&gt;
+    &lt;span class="k"&gt;while&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;read&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;STDIN_FILENO&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;buf&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;bsize&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="k"&gt;if&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;write&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;STDOUT_FILENO&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;buf&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;!=&lt;/span&gt;&lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="p"&gt;{&lt;/span&gt;
+            &lt;span class="n"&gt;printf&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;write error&lt;/span&gt;&lt;span class="se"&gt;\n&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+            &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+        &lt;span class="p"&gt;}&lt;/span&gt;
+    &lt;span class="k"&gt;if&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;printf&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;read erro&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;上述程序完成对系统调用read和write效率的测试，实际上是从标准输入复制数据到标准输出。可选
+的参数决定每次IO的buf的大小。使用time工具可以获取程序执行的时间。测试的数据in文件是100Ｍ
+的一个英文文本文件。&lt;/p&gt;
+&lt;p&gt;首先选择buf的大小为1,即每次只读写1个字节。&lt;/p&gt;
+&lt;div class="codehilite"&gt;&lt;pre&gt;lijsf@echolii-PC:chapt3&lt;span class="nv"&gt;$ &lt;/span&gt;&lt;span class="nb"&gt;time&lt;/span&gt; ./a.out 1 &amp;lt;in&amp;gt;out
+real    2m46.823s
+user    0m7.768s
+sys     2m38.034s
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;结果可以看到，实际用时超过了2分钟，其中系统调用占用了绝大多数时间。&lt;/p&gt;
+&lt;p&gt;再选择buf大小为8192：&lt;/p&gt;
+&lt;div class="codehilite"&gt;&lt;pre&gt;lijsf@echolii-PC:chapt3&lt;span class="nv"&gt;$ &lt;/span&gt;&lt;span class="nb"&gt;time&lt;/span&gt; ./a.out 8192 &amp;lt;in&amp;gt;out
+real    0m0.566s
+user    0m0.000s
+sys     0m0.152s
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;结果显示效率相对于上次的结果要好的多，原因时，此时系统调用的数目是上一次的4096分之一。实际上
+由于block大小是4096,每一次系统调用只能读写4096字节，本次实验中虽然名面上每次读写了8192字节，
+实际上系统会分两次读写，每次依然读写4096字节。&lt;/p&gt;
+&lt;p&gt;最后选择每次读写4096字节，即理论上的最优大小。&lt;/p&gt;
+&lt;div class="codehilite"&gt;&lt;pre&gt;lijsf@echolii-PC:chapt3&lt;span class="nv"&gt;$ &lt;/span&gt;&lt;span class="nb"&gt;time&lt;/span&gt; ./a.out 4096 &amp;lt;in&amp;gt;out
+real    0m0.131s
+user    0m0.000s
+sys     0m0.128s
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;对比上述8192的结果，可以看到，系统调用的时间并未有大的变化，但程序执行的实际时间却有更大的优化。
+原因是，在选择了8192字节的buf时，系统不能一次读写完整个buf，所以需要花费时间等待系统IO完成的中
+断。这会导致系统挂起执行线程，去执行其他的线程。所以程序的系统运行时间并未增加，但实际运行时间却
+增加了。&lt;/p&gt;
+&lt;p&gt;综上所述，在采用系统IO函数时，需要注意IO的效率，考虑合适的读写缓存buf，从而可以明显的改善程序的
+在IO上的运行效率。&lt;/p&gt;</summary><category term="unix环境高级编程"></category><category term="linux编程"></category></entry><entry><title>mplayer字幕诸问题</title><link href="http://bluedream.me/mplayerzi-mu-zhu-wen-ti.html" rel="alternate"></link><updated>2013-03-02T22:23:00+08:00</updated><author><name>lijsf</name></author><id>tag:bluedream.me,2013-03-02:mplayerzi-mu-zhu-wen-ti.html</id><summary type="html">&lt;p&gt;mplayer功能强大，是linux下播放视频，电影的不二选择，但源于其功能太过于强大，
 使用起来还是有很大的难度的，但归结到我这样的新手，英语又差的，最棘手的无疑
 时字幕的诸多问题。本文记录我在使用mplayer时解决字幕问题的一些方法。&lt;/p&gt;
 &lt;h2&gt;字幕下载&lt;/h2&gt;
@@ -13,8 +96,8 @@
 射手虽然没有提供开放的API，但这难不倒程序员，况且我们只是自己下载来看的，
 并不做批量下载，所以避开射手的防机器人手段还是可以做到的。有了想法自然时
 动手实现。上github搜了一下是否已经有高手实现过了。果然，已经有人实现了这么
-一个脚本。这就是mplayer-wraper。作者的github id是sunbing81，这是其项目主页
-http://gosubi.me/adow/mplayerwrapper，有很详细的介绍，照做不难。该项目有
+一个脚本。这就是mplayer-wraper。作者的github的id是sunbing81，这是其项目主页
+地址:http://gosubi.me/adow/mplayerwrapper，有很详细的介绍，照做不难。该项目有
 bash和python两个版本，python实现了影片hash和字幕的hash匹配，可以很精准的
 查找到字幕，基本不存在字幕时序问题。&lt;/p&gt;
 &lt;h2&gt;字幕加载&lt;/h2&gt;
