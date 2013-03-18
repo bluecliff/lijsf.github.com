@@ -1,5 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Blue Dream</title><link href="http://bluedream.me/" rel="alternate"></link><link href="http://bluedream.me/feeds/all-cn.atom.xml" rel="self"></link><id>http://bluedream.me/</id><updated>2013-03-06T00:00:00+08:00</updated><entry><title>linux IO函数的效率(1)</title><link href="http://bluedream.me/linux-iohan-shu-de-xiao-lu-1.html" rel="alternate"></link><updated>2013-03-06T00:00:00+08:00</updated><author><name>lijsf</name></author><id>tag:bluedream.me,2013-03-06:linux-iohan-shu-de-xiao-lu-1.html</id><summary type="html">&lt;p&gt;linux下iso-c实现即GNU的glibc库，IO库主要是头文件stdio.h文件下的一些函数。一般情况下应用到的
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Blue Dream</title><link href="http://bluedream.me/" rel="alternate"></link><link href="http://bluedream.me/feeds/all-cn.atom.xml" rel="self"></link><id>http://bluedream.me/</id><updated>2013-03-08T00:00:00+08:00</updated><entry><title>linux IO函数的效率(2)</title><link href="http://bluedream.me/linux-iohan-shu-de-xiao-lu-2.html" rel="alternate"></link><updated>2013-03-08T00:00:00+08:00</updated><author><name>lijsf</name></author><id>tag:bluedream.me,2013-03-08:linux-iohan-shu-de-xiao-lu-2.html</id><summary type="html">&lt;h1&gt;Ｃ标准IO库的效率&lt;/h1&gt;
+&lt;p&gt;Ｃ标准IO库主要是stdio.h文件中所包含的函数。这些函数封装了系统内核级的调用
+提供了一个标准的接口，根据标准接口，各个系统均可实现自己的IO库。所以在不同
+系统上，有不同的具体优化策略，最终实现一个最优的IO效率。&lt;/p&gt;
+&lt;p&gt;标准IO函数主要的优化策略是采用了缓冲机制。无论是读还是写，都是先读或者写到
+一个系统缓冲区，该缓冲区由系统维护。直到缓冲区满或者必要时，才读写到具体的
+文件。打开一个文件流，即建立一个和打开文件相对应的缓冲区。缓冲区大小与系统
+相关。&lt;/p&gt;
+&lt;p&gt;下面是标准IO函数的性能测试。&lt;/p&gt;
+&lt;p&gt;从标准输入读100MB的文档，输出到标准输出。首先采用fgets和fputs函数，这两个函数
+可以一次读入或者写指定大小的字符数到系统缓冲区。&lt;/p&gt;
+&lt;div class="codehilite"&gt;&lt;pre&gt;&lt;span class="cp"&gt;#include &amp;lt;stdio.h&amp;gt;&lt;/span&gt;
+&lt;span class="cp"&gt;#define MAXLINE 1024&lt;/span&gt;
+&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="nf"&gt;main&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="kt"&gt;char&lt;/span&gt; &lt;span class="n"&gt;buf&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;MAXLINE&lt;/span&gt;&lt;span class="p"&gt;];&lt;/span&gt;
+    &lt;span class="k"&gt;while&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;fgets&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;buf&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;MAXLINE&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;stdin&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;!=&lt;/span&gt;&lt;span class="nb"&gt;NULL&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="k"&gt;if&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;fputs&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;buf&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;stdout&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;==&lt;/span&gt;&lt;span class="n"&gt;EOF&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+            &lt;span class="n"&gt;printf&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;stdout error&lt;/span&gt;&lt;span class="se"&gt;\n&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+    &lt;span class="p"&gt;}&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;测试该函数的执行时间:&lt;/p&gt;
+&lt;div class="codehilite"&gt;&lt;pre&gt;&lt;span class="nb"&gt;time&lt;/span&gt; ./a.out &amp;lt;in&amp;gt;out
+real    0m0.783s
+user    0m0.204s
+sys     0m0.168s
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;其次，再用getc和putc实现上面的同样功能，这两个函数只能每一次读写一个字符进入缓冲区。&lt;/p&gt;
+&lt;div class="codehilite"&gt;&lt;pre&gt;&lt;span class="cp"&gt;#include &amp;lt;stdio.h&amp;gt;&lt;/span&gt;
+&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="nf"&gt;main&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;c&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="k"&gt;while&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="n"&gt;c&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;getc&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;stdin&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt; &lt;span class="o"&gt;!=&lt;/span&gt; &lt;span class="n"&gt;EOF&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="k"&gt;if&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;putc&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;c&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;stdout&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="n"&gt;EOF&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+            &lt;span class="n"&gt;printf&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;error to put&lt;/span&gt;&lt;span class="se"&gt;\n&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;同样测量该函数的执行时间：&lt;/p&gt;
+&lt;div class="codehilite"&gt;&lt;pre&gt;&lt;span class="nb"&gt;time&lt;/span&gt; ./a.out &amp;lt;in&amp;gt;out
+real    0m2.414s
+user    0m1.800s
+sys     0m0.200s
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;对比两个结果，可以看到，系统时间相差不大，这在于系统缓冲区大小是相同的，所以最终的系统
+调用级的IO次数是相同的，这个和上一节中的采用最佳块大小时的IO时间是接近的，从侧面反映了
+标准C的IO函数采用了优化过的缓冲区大小。&lt;/p&gt;
+&lt;p&gt;两个函数执行时间相差比较大的是用户时间和实际时间，这主要是函数调用开销的影响。100MB的文件
+一次读写一个字符和一次读写1024个字符，getc的调用次数是fgets的1024倍，这个开销反映在用户时间
+的差距上。真实时间差距进一步拉大是因为进程等待的时间，函数调用次数越多，进程等待的可能性必然
+也随之增大。&lt;/p&gt;</summary><category term="unix环境高级编程"></category><category term="linux编程"></category></entry><entry><title>linux IO函数的效率(1)</title><link href="http://bluedream.me/linux-iohan-shu-de-xiao-lu-1.html" rel="alternate"></link><updated>2013-03-06T00:00:00+08:00</updated><author><name>lijsf</name></author><id>tag:bluedream.me,2013-03-06:linux-iohan-shu-de-xiao-lu-1.html</id><summary type="html">&lt;p&gt;linux下iso-c实现即GNU的glibc库，IO库主要是头文件stdio.h文件下的一些函数。一般情况下应用到的
 IO操作基本就是该库的IO函数的使用。但同时linux内核也提供了IO的系统调用。本文是在阅读Advanced
 programming in the UNIX environment这本书时做的笔记，主要是关于ISO-C的IO库和linux系统调用IO的效率对比。&lt;/p&gt;
 &lt;h2&gt;linux系统调用的IO&lt;/h2&gt;

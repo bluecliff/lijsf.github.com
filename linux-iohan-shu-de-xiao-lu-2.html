@@ -74,46 +74,89 @@
       <div>
 	<article class="hentry" role="article">
 	<header>
-          <h1 class="entry-title">有道云笔记共享的chrome插件开发</h1>
-          <p class="meta"><time datetime="2013-01-18T00:00:00" pubdate>2013 一月 18 五</time></p>
+          <h1 class="entry-title">linux IO函数的效率(2)</h1>
+          <p class="meta"><time datetime="2013-03-08T00:00:00" pubdate>2013 三月 08 五</time></p>
 </header>
 
-  <div class="entry-content"><p>开发一个chrome的插件，实现把有道云笔记的内容通过邮件共享给好友。</p>
-<h1>初步想法</h1>
-<p>有道云笔记的windows桌面版，android版都时有共享功能的，但不知道为什么，web版的却没有～～而自己却大部分的工作学习
-  都是在linux下的。云笔记主要时用来构建自己的知识库，网上看到一段好的文字，图片，代码等东西，又不能只保存链接。好的
-  方法时下载下来分类保存，构建起自己的知识库。这时候云笔记的优势就很明显了，用插件可以很方便的把浏览器内的内容保存到
-  云端笔记中。还可以同步到手机上有空了再看～～这一功能很吸引人。</p>
-<p>国内现在可用的云笔记很多，较好的有有道，印象，麦库等。对比而言，印象笔记时老牌的国外产品evernote在国内的发布版本，
-  试用了一下，速度很快，功能强大，每月60Ｍ的上载流量也够用。但时，android版的居然不能离线保存，该功能时收费的，fuck
-  收费。要是每次看个东西都要下载一次的话，流量时真伤不起的。麦库没试用，网上的说法都是做的比较烂的。剩下个有道云，用了
-  一个多月，感觉还可以，功能相比印象差了点，但好歹够用，离线模式很好，很省流量～～但网易有道也太不重视web版的开发了，
-  弄的很多功能残缺，不能共享是最大的短板了。</p>
-<p>指望有道推出新版本，还不如自己动手。查了一下有道的开放API，居然也没有提供共享的API，没办法，只能采取其他路子了。暂时
-  的想法如下：</p>
-<p>(1).  采用chrome插件方式开发，主要时js。
-  (2).  采用gmail发送邮件，chrome有一些发送邮件的插件，可以参考。
-  (3).  采用有道云笔记的API获取笔记的标题，内容，来源等信息，构造除gmail邮件的标题和内容。</p>
-<p>基本的实现方式采用上面的方法。因为对js确实不熟，也没有开发过chrome插件，不知道行的通不。目前觉得比较难的时下面两点</p>
-<p>(1).  需要同时认证两个系统，gmail和有道云。但想到既然要分享笔记内的内容，肯定是已经登录了笔记本的，是否可以免去有
-  道的认证？
-  (2).  有道API返回的笔记内容是json数据格式的，对于一些需要特殊保存的格式怎么办？比如代码等对各时要求比较严的东西。</p>
-<p>现在主要是考虑构思阶段，等寒假了好好考虑一下。</p>
-<p>另外，很意外的chrome的插件里居然找不到一个可以自动摘取网页内容并邮件发送的插件，应用印象笔记和有道云笔记时，这俩货
-  的网页截取插件让我印象深刻，都很智能，能否改造一下这俩货，搞个chrome的直接智能截取网页内容并邮件的插件，省去ctr+C
-  和ctr+v呢？</p></div>
+  <div class="entry-content"><h1>Ｃ标准IO库的效率</h1>
+<p>Ｃ标准IO库主要是stdio.h文件中所包含的函数。这些函数封装了系统内核级的调用
+提供了一个标准的接口，根据标准接口，各个系统均可实现自己的IO库。所以在不同
+系统上，有不同的具体优化策略，最终实现一个最优的IO效率。</p>
+<p>标准IO函数主要的优化策略是采用了缓冲机制。无论是读还是写，都是先读或者写到
+一个系统缓冲区，该缓冲区由系统维护。直到缓冲区满或者必要时，才读写到具体的
+文件。打开一个文件流，即建立一个和打开文件相对应的缓冲区。缓冲区大小与系统
+相关。</p>
+<p>下面是标准IO函数的性能测试。</p>
+<p>从标准输入读100MB的文档，输出到标准输出。首先采用fgets和fputs函数，这两个函数
+可以一次读入或者写指定大小的字符数到系统缓冲区。</p>
+<div class="codehilite"><pre><span class="cp">#include &lt;stdio.h&gt;</span>
+<span class="cp">#define MAXLINE 1024</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="kt">char</span> <span class="n">buf</span><span class="p">[</span><span class="n">MAXLINE</span><span class="p">];</span>
+    <span class="k">while</span><span class="p">(</span><span class="n">fgets</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">MAXLINE</span><span class="p">,</span> <span class="n">stdin</span><span class="p">)</span><span class="o">!=</span><span class="nb">NULL</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">fputs</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">stdout</span><span class="p">)</span><span class="o">==</span><span class="n">EOF</span><span class="p">)</span>
+            <span class="n">printf</span><span class="p">(</span><span class="s">&quot;stdout error</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>测试该函数的执行时间:</p>
+<div class="codehilite"><pre><span class="nb">time</span> ./a.out &lt;in&gt;out
+real    0m0.783s
+user    0m0.204s
+sys     0m0.168s
+</pre></div>
+
+
+<p>其次，再用getc和putc实现上面的同样功能，这两个函数只能每一次读写一个字符进入缓冲区。</p>
+<div class="codehilite"><pre><span class="cp">#include &lt;stdio.h&gt;</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">c</span><span class="p">;</span>
+    <span class="k">while</span><span class="p">((</span><span class="n">c</span><span class="o">=</span><span class="n">getc</span><span class="p">(</span><span class="n">stdin</span><span class="p">))</span> <span class="o">!=</span> <span class="n">EOF</span><span class="p">)</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">putc</span><span class="p">(</span><span class="n">c</span><span class="p">,</span><span class="n">stdout</span><span class="p">)</span> <span class="o">==</span> <span class="n">EOF</span><span class="p">)</span>
+            <span class="n">printf</span><span class="p">(</span><span class="s">&quot;error to put</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>同样测量该函数的执行时间：</p>
+<div class="codehilite"><pre><span class="nb">time</span> ./a.out &lt;in&gt;out
+real    0m2.414s
+user    0m1.800s
+sys     0m0.200s
+</pre></div>
+
+
+<p>对比两个结果，可以看到，系统时间相差不大，这在于系统缓冲区大小是相同的，所以最终的系统
+调用级的IO次数是相同的，这个和上一节中的采用最佳块大小时的IO时间是接近的，从侧面反映了
+标准C的IO函数采用了优化过的缓冲区大小。</p>
+<p>两个函数执行时间相差比较大的是用户时间和实际时间，这主要是函数调用开销的影响。100MB的文件
+一次读写一个字符和一次读写1024个字符，getc的调用次数是fgets的1024倍，这个开销反映在用户时间
+的差距上。真实时间差距进一步拉大是因为进程等待的时间，函数调用次数越多，进程等待的可能性必然
+也随之增大。</p></div>
 	<footer>
 	<p class="meta">
   <span class="byline author vcard">
     Posted by <span class="fn">lijsf</span>
   </span>
-  <time datetime="2013-01-18T00:00:00" pubdate>2013 一月 18 五</time>  </p>	</footer>
+  <time datetime="2013-03-08T00:00:00" pubdate>2013 三月 08 五</time>    <span class="categories">
+        <a class="category" href="./tag/unixhuan-jing-gao-ji-bian-cheng.html">unix环境高级编程</a>
+        <a class="category" href="./tag/linuxbian-cheng.html">linux编程</a>
+      </span>
+  </p>	</footer>
 	
 	<!--这是一段注释。注释掉下一篇文章，暂时还没实现这个功能。-->
 	<!--
 	<p class="meta">
 
-		<a class="basic-alignment left" href="/2012/09/new-wacom/" title="Previous Post: 入手Wacom Bamboo CTL470">&laquo;有道云笔记共享的chrome插件开发</a>
+		<a class="basic-alignment left" href="/2012/09/new-wacom/" title="Previous Post: 入手Wacom Bamboo CTL470">&laquo;linux IO函数的效率(2)</a>
 	
 	<a class="basic-alignment right" href="/2013/01/leave-google/" title="Next Post: Richard Stallman仍然是对的">Richard Stallman仍然是对的 &raquo;</a>
 
