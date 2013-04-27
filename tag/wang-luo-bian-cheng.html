@@ -75,23 +75,27 @@
     	  		<article>
     		<header>
           <h1 class="entry-title">
-        <a href="../you-dao-yun-bi-ji-gong-xiang-de-chromecha-jian-kai-fa.html">有道云笔记共享的chrome插件开发</a>
+        <a href="../radius protocol.html">radius协议简介</a>
       </h1>
-          <p class="meta"><time datetime="2013-01-18T00:00:00" pubdate>2013 一月 18 五</time></p>
+          <p class="meta"><time datetime="2013-03-20T10:20:00" pubdate>2013 三月 20 三</time></p>
 </header>
 
-  <div class="entry-content"><p>开发一个chrome的插件，实现把有道云笔记的内容通过邮件共享给好友。</p>
-<h1>初步想法</h1>
-<p>有道云笔记的windows桌面版，android版都时有共享功能的，但不知道为什么，web版的却没有～～而自己却大部分的工作学习
-  都是在linux下的。云笔记主要时用来构建自己的知识库，网上看到一段好的文字，图片，代码等东西，又不能只保存链接。好的
-  方法时下载下来分类保存，构建起自己的知识库。这时候云笔记的优势就很明显了，用插件可以很方便的把浏览器内的内容保存到
-  云端笔记中。还可以同步到手机上有空了再看～～这一功能很吸引人。</p>
-<p>国内现在可用的云笔记很多，较好的有有道，印象，麦库等。对比而言，印象笔记时老牌的国外产品evernote在国内的发布版本，
-  试用了一下，速度很快，功能强大，每月60Ｍ的上载流量也够用。但时，android版的居然不能离线保存，该功能时收费的，fuck
-  收费。要是每次看个东西都要下载一次的话，流量时真伤不起的。麦库没试用，网上的说法都是做的比较烂的。剩下个有道云，用了
-  一个多月，感觉还可以，功能相比印象差了点，但好歹够用，离线模式很好，很省流量～～但网易有道也太不重视web版的开发了 ...</p></div>
+  <div class="entry-content"><h2>radius协议简介</h2>
+<p>radius(Remote Authentication Dial In User Service)协议是一种AAA网络协议，兼顾Authentication, Authorization, and Accounting (AAA)认证，授权，计费功能的网络管理协议。该协议是应用层协议，基础是UDP协议。</p>
+<p>radius是一个CS结构的协议，C端一般是RAS(Remote Access Server)服务器，包括网关，web服务器，认证网关等(一般的服务端，但在radius协议中是客户端。)，这些软硬件设备都具备一个radius clien模块，可以和radius server通信。radius server通常是后台运行在Unix或者windows主机上的一个进程。radius server具备三个功能：</p>
+<ol>
+<li>认证未授权用户</li>
+<li>授权给通过认证的用户访问特定网络服务的权限</li>
+<li>对用户使用的服务进行计费</li>
+</ol>
+<h2>认证和授权过程</h2>
+<p><img alt="radius数据包的结构" src="./images/radius_access.png" /> </p>
+<p>1.用户向RAS发起认证请求，认证凭证信息传送给RAS。可以使用链路层协议传送凭证信息，也可以使用https形式的web form。</p>
+<ol>
+<li>
+<p>RAS向radius server ...</p></li></ol></div>
   <footer>
-    <a rel="full-article" href="../you-dao-yun-bi-ji-gong-xiang-de-chromecha-jian-kai-fa.html">Read On &crarr;</a>
+    <a rel="full-article" href="../radius protocol.html">Read On &crarr;</a>
   </footer>
   		</article>
   	  	<div class="pagination">
@@ -103,7 +107,7 @@
     <h1>Recent Posts</h1>
     <ul id="recent_posts">
             <li class="post">
-          <a href="../you-dao-yun-bi-ji-gong-xiang-de-chromecha-jian-kai-fa.html">有道云笔记共享的chrome插件开发</a>
+          <a href="../radius protocol.html">radius协议简介</a>
       </li>
           </ul>
   </section>

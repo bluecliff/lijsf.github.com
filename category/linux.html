@@ -75,6 +75,49 @@
     	  		<article>
     		<header>
           <h1 class="entry-title">
+        <a href="../shou-hu-jin-cheng-jian-dan-fen-xi.html">守护进程简单分析</a>
+      </h1>
+          <p class="meta"><time datetime="2013-04-10T09:10:00" pubdate>2013 四月 10 三</time></p>
+</header>
+
+  <div class="entry-content"><p>守护进程（Daemon）是运行在后台的一种特殊进程。它独立于控制终端并且周期性地执行某种任务或等待处理某些发生的事件。守护进程是一种很有用的进程。Linux的大多数服务就是用守护进程实现的。比如，Internet服务器inetd，Web服务器httpd等。同时，守护进程完成许多系统任务。比如，作业规划进程crond，打印进程lpd等。这些带有d的服务都是守护进程。</p>
+<h2>系统守护进程</h2>
+<p>系统守护进程分为两种，一种时刻等待某个事件发生，另一种则周期性的运行。前者如httpd，后者如crond。另一方面守护进程在实现时有两种，一种是所谓的standalone守护进程，另一种即super daemon。前者是单独执行一个服务，后者则在某个事件发生时，去启动针对的处理程序。可以看到super daemon是一个管理进程，本身并不提供特定的服务。</p>
+<p>Linux系统启动时会自动启动相应的守护进程，使系统正常工作，这些自启动的守护进程主要是由/etc/rc#.d，/etc/init.d这几个目录下的脚本完成的。</p>
+<p>系统首先启动init进程，该进程再根据启动级别（0——6）去执行rc#.d目录下的脚本，而rc#.d下的脚本实际上都是指向init.d目录下脚本的链接。在执行rc ...</p></div>
+  <footer>
+    <a rel="full-article" href="../shou-hu-jin-cheng-jian-dan-fen-xi.html">Read On &crarr;</a>
+  </footer>
+  		</article>
+  	  		<article>
+    		<header>
+          <h1 class="entry-title">
+        <a href="../radius protocol.html">radius协议简介</a>
+      </h1>
+          <p class="meta"><time datetime="2013-03-20T10:20:00" pubdate>2013 三月 20 三</time></p>
+</header>
+
+  <div class="entry-content"><h2>radius协议简介</h2>
+<p>radius(Remote Authentication Dial In User Service)协议是一种AAA网络协议，兼顾Authentication, Authorization, and Accounting (AAA)认证，授权，计费功能的网络管理协议。该协议是应用层协议，基础是UDP协议。</p>
+<p>radius是一个CS结构的协议，C端一般是RAS(Remote Access Server)服务器，包括网关，web服务器，认证网关等(一般的服务端，但在radius协议中是客户端。)，这些软硬件设备都具备一个radius clien模块，可以和radius server通信。radius server通常是后台运行在Unix或者windows主机上的一个进程。radius server具备三个功能：</p>
+<ol>
+<li>认证未授权用户</li>
+<li>授权给通过认证的用户访问特定网络服务的权限</li>
+<li>对用户使用的服务进行计费</li>
+</ol>
+<h2>认证和授权过程</h2>
+<p><img alt="radius数据包的结构" src="./images/radius_access.png" /> </p>
+<p>1.用户向RAS发起认证请求，认证凭证信息传送给RAS。可以使用链路层协议传送凭证信息，也可以使用https形式的web form。</p>
+<ol>
+<li>
+<p>RAS向radius server ...</p></li></ol></div>
+  <footer>
+    <a rel="full-article" href="../radius protocol.html">Read On &crarr;</a>
+  </footer>
+  		</article>
+  	  		<article>
+    		<header>
+          <h1 class="entry-title">
         <a href="../linux-iohan-shu-de-xiao-lu-2.html">linux IO函数的效率(2)</a>
       </h1>
           <p class="meta"><time datetime="2013-03-08T00:00:00" pubdate>2013 三月 08 五</time></p>
@@ -126,20 +169,8 @@
     <a rel="full-article" href="../mplayerzi-mu-zhu-wen-ti.html">Read On &crarr;</a>
   </footer>
   		</article>
-  	  		<article>
-    		<header>
-          <h1 class="entry-title">
-        <a href="../inodeClient_install.html">ubuntu12.04 64位系统安装校园网客户端inodeClient</a>
-      </h1>
-          <p class="meta"><time datetime="2013-01-12T10:20:00" pubdate>2013 一月 12 六</time></p>
-</header>
-
-  <div class="entry-content">linux安装inode的过程记录</div>
-  <footer>
-    <a rel="full-article" href="../inodeClient_install.html">Read On &crarr;</a>
-  </footer>
-  		</article>
   	  	<div class="pagination">
+      <a class="prev" href="../category/linux2.html">&larr; Older</a>
   
     <br />
 </div>  </div>
@@ -148,6 +179,12 @@
     <h1>Recent Posts</h1>
     <ul id="recent_posts">
             <li class="post">
+          <a href="../shou-hu-jin-cheng-jian-dan-fen-xi.html">守护进程简单分析</a>
+      </li>
+            <li class="post">
+          <a href="../radius protocol.html">radius协议简介</a>
+      </li>
+            <li class="post">
           <a href="../linux-iohan-shu-de-xiao-lu-2.html">linux IO函数的效率(2)</a>
       </li>
             <li class="post">
@@ -155,9 +192,6 @@
       </li>
             <li class="post">
           <a href="../mplayerzi-mu-zhu-wen-ti.html">mplayer字幕诸问题</a>
-      </li>
-            <li class="post">
-          <a href="../inodeClient_install.html">ubuntu12.04 64位系统安装校园网客户端inodeClient</a>
       </li>
           </ul>
   </section>
@@ -175,7 +209,7 @@
  -->
   <section>
   <h1>Tags</h1>
-      <a href="../tag/gong-cheng-you-hua-fang-fa.html">工程优化方法</a>,      <a href="../tag/python.html">python</a>,      <a href="../tag/linuxying-yong.html">linux应用</a>,      <a href="../tag/linuxbian-cheng.html">linux编程</a>,      <a href="../tag/ubuntu1204.html">ubuntu12.04</a>,      <a href="../tag/unixhuan-jing-gao-ji-bian-cheng.html">unix环境高级编程</a>,      <a href="../tag/mplayer.html">mplayer</a>,      <a href="../tag/xiao-yuan-wang.html">校园网</a>,      <a href="../tag/inodeclient.html">inodeClient</a>    </section>
+      <a href="../tag/gong-cheng-you-hua-fang-fa.html">工程优化方法</a>,      <a href="../tag/python.html">python</a>,      <a href="../tag/linuxying-yong.html">linux应用</a>,      <a href="../tag/linuxbian-cheng.html">linux编程</a>,      <a href="../tag/ubuntu1204.html">ubuntu12.04</a>,      <a href="../tag/xiao-yuan-wang.html">校园网</a>,      <a href="../tag/unixhuan-jing-gao-ji-bian-cheng.html">unix环境高级编程</a>,      <a href="../tag/mplayer.html">mplayer</a>,      <a href="../tag/linuxxi-tong-bian-cheng.html">Linux系统编程</a>,      <a href="../tag/wang-luo-bian-cheng.html">网络编程</a>,      <a href="../tag/inodeclient.html">inodeClient</a>    </section>
 
     
     <section>
